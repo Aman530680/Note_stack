@@ -15,13 +15,24 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
-  cors: { origin: process.env.CLIENT_URL || 'http://localhost:3000', methods: ['GET', 'POST'] }
+  cors: {
+    origin: [
+      'http://localhost:3000',
+      'https://note-stack-ten.vercel.app',
+      process.env.CLIENT_URL
+    ].filter(Boolean),
+    methods: ['GET', 'POST']
+  }
 });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'https://note-stack-ten.vercel.app',
+    process.env.CLIENT_URL
+  ].filter(Boolean),
   credentials: true
 }));
 app.use(helmet({ crossOriginResourcePolicy: false }));
