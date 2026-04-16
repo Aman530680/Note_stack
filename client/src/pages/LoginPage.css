@@ -102,13 +102,23 @@
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: #fff;
-  color: #333;
+  background: #ffffff !important;
+  color: #000000 !important;
   font-weight: 500;
+  -webkit-text-fill-color: #000000 !important;
 }
 
 .form-input::placeholder {
-  color: #999;
+  color: #999 !important;
+  -webkit-text-fill-color: #999 !important;
+}
+
+.form-input:-webkit-autofill,
+.form-input:-webkit-autofill:hover,
+.form-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #000000 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  background-color: #ffffff !important;
 }
 
 .form-input:focus {
