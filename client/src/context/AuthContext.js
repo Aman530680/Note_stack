@@ -15,11 +15,11 @@ export const AuthProvider = ({ children }) => {
     } else {
       setLoading(false);
     }
-  }, [token]);
+  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get('http://localhost:5001/api/auth/me');
+      const res = await axios.get(`${process.env.REACT_APP_API_URL || 'https://notestack-api.onrender.com/api'}/auth/me`);
       setUser(res.data.data);
     } catch (error) {
       console.error('Error fetching user:', error);

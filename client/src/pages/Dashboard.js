@@ -173,7 +173,7 @@ const Dashboard = () => {
     
     try {
       await incrementDownload(selectedNote._id);
-      window.open(`http://localhost:5001${selectedNote.fileUrl}`, '_blank');
+      window.open(`https://notestack-api.onrender.com${selectedNote.fileUrl}`, '_blank');
       toast.success('Download started!');
     } catch (error) {
       toast.error('Download failed!');
@@ -437,7 +437,7 @@ const Dashboard = () => {
               
               <div className="pdf-viewer">
                 <iframe
-                  src={`http://localhost:5001${selectedNote.fileUrl}#page=1&view=FitH&toolbar=0&navpanes=0&scrollbar=0`}
+                  src={`https://notestack-api.onrender.com${selectedNote.fileUrl}#page=1&view=FitH&toolbar=0&navpanes=0&scrollbar=0`}
                   title="PDF Viewer"
                   width="100%"
                   height="600px"

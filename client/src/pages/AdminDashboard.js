@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
 import { 
   FaBell, FaCheckCircle, FaTimesCircle, FaTrash, 
-  FaFileAlt, FaUsers, FaChartBar 
+  FaFileAlt, FaChartBar 
 } from 'react-icons/fa';
 import {
   getAllNotes,
@@ -334,7 +334,7 @@ const AdminDashboard = () => {
                             <FaTrash />
                           </button>
                           <a
-                            href={`http://localhost:5001${note.fileUrl}`}
+                            href={`https://notestack-api.onrender.com${note.fileUrl}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="action-btn view"
