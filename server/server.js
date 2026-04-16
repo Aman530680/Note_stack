@@ -27,14 +27,7 @@ const io = socketio(server, {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://note-stack-ten.vercel.app',
-    process.env.CLIENT_URL
-  ].filter(Boolean),
-  credentials: true
-}));
+app.use(cors({ origin: '*' }));
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use('/api/', rateLimit({ windowMs: 10 * 60 * 1000, max: 100 }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
