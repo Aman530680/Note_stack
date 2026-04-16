@@ -1,46 +1,15 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const mongoose = require('mongoose');
 
-const Note = sequelize.define('Note', {
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true
-  },
-  title: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  subject: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: false
-  },
-  fileUrl: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  status: {
-    type: DataTypes.ENUM('Pending', 'Approved', 'Rejected'),
-    defaultValue: 'Pending'
-  },
-  downloads: {
-    type: DataTypes.INTEGER,
-    defaultValue: 0
-  },
-  avgRating: {
-    type: DataTypes.FLOAT,
-    defaultValue: 0
-  },
-  rankScore: {
-    type: DataTypes.FLOAT,
-    defaultValue: 0
-  }
-}, {
-  timestamps: true
-});
+const noteSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  subject: { type: String, required: true },
+  description: { type: String, required: true },
+  fileUrl: { type: String, required: true },
+  uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
+  downloads: { type: Number, default: 0 },
+  avgRating: { type: Number, default: 0 },
+  rankScore: { type: Number, default: 0 }
+}, { timestamps: true });
 
-module.exports = Note;
+module.exports = mongoose.model('Note', noteSchema);

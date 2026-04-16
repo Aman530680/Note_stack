@@ -1,4 +1,3 @@
-const { Op } = require('sequelize');
 const { Note, User, Notification } = require('../models');
 
 const calcRankScore = (note) => {
@@ -7,7 +6,6 @@ const calcRankScore = (note) => {
   return (note.avgRating * 20 * 0.6) + (note.downloads * 0.3) + (recency * 0.1);
 };
 
-// @route POST /api/notes/upload
 exports.uploadNote = async (req, res) => {
   try {
     const { title, subject, description } = req.body;
@@ -16,17 +14,17 @@ exports.uploadNote = async (req, res) => {
     const note = await Note.create({
       title, subject, description,
       fileUrl: `/uploads/${req.file.filename}`,
-      UserId: req.user.id,
+      uploadedBy: req.user.id,
       status: 'Pending'
     });
 
     await Notification.create({
       message: `New note "${title}" uploaded by ${req.user.name}`,
-      NoteId: note.id,
-      UserId: req.user.id
+      noteId: note._id,
+      studentId: req.user.id
     });
 
-    await User.increment('contributionScore', { by: 10, where: { id: req.user.id } });
+    await User.findByIdAndUpdate(req.user.id, { $inc: { contributionScore: 10 } });
 
     res.status(201).json({ success: true, data: note });
   } catch (error) {
@@ -34,79 +32,61 @@ exports.uploadNote = async (req, res) => {
   }
 };
 
-// @route GET /api/notes
 exports.getNotes = async (req, res) => {
   try {
-    const notes = await Note.findAll({
-      where: { status: 'Approved' },
-      include: [{ model: User, attributes: ['name', 'email'] }],
-      order: [['rankScore', 'DESC'], ['createdAt', 'DESC']]
-    });
+    const notes = await Note.find({ status: 'Approved' })
+      .populate('uploadedBy', 'name email')
+      .sort({ rankScore: -1, createdAt: -1 });
     res.status(200).json({ success: true, count: notes.length, data: notes });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// @route GET /api/notes/search
 exports.searchNotes = async (req, res) => {
   try {
     const { query, subject } = req.query;
-    const where = { status: 'Approved' };
+    const filter = { status: 'Approved' };
 
-    if (query) {
-      where[Op.or] = [
-        { title: { [Op.iLike]: `%${query}%` } },
-        { description: { [Op.iLike]: `%${query}%` } }
-      ];
-    }
-    if (subject) where.subject = { [Op.iLike]: `%${subject}%` };
+    if (query) filter.$or = [
+      { title: { $regex: query, $options: 'i' } },
+      { description: { $regex: query, $options: 'i' } }
+    ];
+    if (subject) filter.subject = { $regex: subject, $options: 'i' };
 
-    const notes = await Note.findAll({
-      where,
-      include: [{ model: User, attributes: ['name', 'email'] }],
-      order: [['rankScore', 'DESC']]
-    });
+    const notes = await Note.find(filter)
+      .populate('uploadedBy', 'name email')
+      .sort({ rankScore: -1 });
     res.status(200).json({ success: true, count: notes.length, data: notes });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// @route GET /api/notes/trending
 exports.getTrendingNotes = async (req, res) => {
   try {
-    const notes = await Note.findAll({
-      where: { status: 'Approved' },
-      include: [{ model: User, attributes: ['name'] }],
-      order: [['rankScore', 'DESC']],
-      limit: 10
-    });
+    const notes = await Note.find({ status: 'Approved' })
+      .populate('uploadedBy', 'name')
+      .sort({ rankScore: -1 })
+      .limit(10);
     res.status(200).json({ success: true, data: notes });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// @route GET /api/notes/my/all
 exports.getMyNotes = async (req, res) => {
   try {
-    const notes = await Note.findAll({
-      where: { UserId: req.user.id },
-      order: [['createdAt', 'DESC']]
-    });
+    const notes = await Note.find({ uploadedBy: req.user.id }).sort({ createdAt: -1 });
     res.status(200).json({ success: true, count: notes.length, data: notes });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// @route GET /api/notes/:id
 exports.getNote = async (req, res) => {
   try {
-    const note = await Note.findByPk(req.params.id, {
-      include: [{ model: User, attributes: ['name', 'email'] }]
-    });
+    const note = await Note.findById(req.params.id).populate('uploadedBy', 'name email');
     if (!note) return res.status(404).json({ success: false, message: 'Note not found' });
     res.status(200).json({ success: true, data: note });
   } catch (error) {
@@ -114,10 +94,9 @@ exports.getNote = async (req, res) => {
   }
 };
 
-// @route PUT /api/notes/:id/download
 exports.incrementDownload = async (req, res) => {
   try {
-    const note = await Note.findByPk(req.params.id);
+    const note = await Note.findById(req.params.id);
     if (!note) return res.status(404).json({ success: false, message: 'Note not found' });
 
     note.downloads += 1;
@@ -130,34 +109,28 @@ exports.incrementDownload = async (req, res) => {
   }
 };
 
-// @route GET /api/notes/admin/all
 exports.getAllNotes = async (req, res) => {
   try {
-    const notes = await Note.findAll({
-      include: [{ model: User, attributes: ['name', 'email', 'contact'] }],
-      order: [['createdAt', 'DESC']]
-    });
+    const notes = await Note.find()
+      .populate('uploadedBy', 'name email contact')
+      .sort({ createdAt: -1 });
     res.status(200).json({ success: true, count: notes.length, data: notes });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// @route PUT /api/notes/:id/approve
 exports.approveNote = async (req, res) => {
   try {
     const { status } = req.body;
-    const note = await Note.findByPk(req.params.id);
+    const note = await Note.findById(req.params.id);
     if (!note) return res.status(404).json({ success: false, message: 'Note not found' });
 
     note.status = status;
     await note.save();
 
     if (status === 'Approved') {
-      await User.increment(
-        { contributionScore: 20, coins: 10 },
-        { where: { id: note.UserId } }
-      );
+      await User.findByIdAndUpdate(note.uploadedBy, { $inc: { contributionScore: 20, coins: 10 } });
     }
 
     res.status(200).json({ success: true, data: note });
@@ -166,45 +139,42 @@ exports.approveNote = async (req, res) => {
   }
 };
 
-// @route DELETE /api/notes/:id  (admin)
 exports.deleteNote = async (req, res) => {
   try {
-    const note = await Note.findByPk(req.params.id);
+    const note = await Note.findByIdAndDelete(req.params.id);
     if (!note) return res.status(404).json({ success: false, message: 'Note not found' });
-    await note.destroy();
     res.status(200).json({ success: true, message: 'Note deleted successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// @route PUT /api/notes/:id  (student edit own)
 exports.updateNote = async (req, res) => {
   try {
     const { title, subject, description } = req.body;
-    const note = await Note.findByPk(req.params.id);
+    const note = await Note.findById(req.params.id);
     if (!note) return res.status(404).json({ success: false, message: 'Note not found' });
 
-    if (note.UserId !== req.user.id && req.user.role !== 'admin')
+    if (note.uploadedBy.toString() !== req.user.id && req.user.role !== 'admin')
       return res.status(403).json({ success: false, message: 'Not authorized' });
 
-    await note.update({ title, subject, description, status: 'Pending' });
+    Object.assign(note, { title, subject, description, status: 'Pending' });
+    await note.save();
     res.status(200).json({ success: true, data: note });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// @route DELETE /api/notes/my/:id  (student delete own)
 exports.deleteOwnNote = async (req, res) => {
   try {
-    const note = await Note.findByPk(req.params.id);
+    const note = await Note.findById(req.params.id);
     if (!note) return res.status(404).json({ success: false, message: 'Note not found' });
 
-    if (note.UserId !== req.user.id)
+    if (note.uploadedBy.toString() !== req.user.id)
       return res.status(403).json({ success: false, message: 'Not authorized' });
 
-    await note.destroy();
+    await note.deleteOne();
     res.status(200).json({ success: true, message: 'Note deleted successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

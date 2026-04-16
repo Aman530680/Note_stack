@@ -9,21 +9,21 @@ const socketio = require('socket.io');
 
 dotenv.config();
 
-// Load models (registers associations)
-require('./models');
-
-const { connectDB } = require('./config/db');
+const connectDB = require('./config/db');
 connectDB();
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
-  cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'] }
+  cors: { origin: process.env.CLIENT_URL || 'http://localhost:3000', methods: ['GET', 'POST'] }
 });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : 'http://localhost:3000',
+  credentials: true
+}));
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use('/api/', rateLimit({ windowMs: 10 * 60 * 1000, max: 100 }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
