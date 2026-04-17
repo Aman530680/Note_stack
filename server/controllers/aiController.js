@@ -49,6 +49,7 @@ exports.summarizeNote = async (req, res) => {
 
     res.json({ success: true, summary });
   } catch (error) {
+    console.error('Summarize error:', error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 };
