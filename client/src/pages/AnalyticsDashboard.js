@@ -56,23 +56,14 @@ const AnalyticsDashboard = () => {
 
       <div className="analytics-container">
         <div className="analytics-header">
-          <h1>📊 Analytics Dashboard</h1>
-          <p>Platform insights and performance metrics</p>
-        </div>
-
-        {/* Overview Cards */}
-        <div className="overview-grid">
-          <div className="overview-card">
-            <h3>{overview.totalNotes || 0}</h3>
-            <p>Total Notes</p>
+          <div className="header-left">
+            <h1>📊 Analytics Dashboard</h1>
+            <p>Platform insights and performance metrics</p>
           </div>
-          <div className="overview-card">
-            <h3>{overview.totalUsers || 0}</h3>
-            <p>Total Students</p>
-          </div>
-          <div className="overview-card">
-            <h3>{overview.totalDownloads || 0}</h3>
-            <p>Total Downloads</p>
+          <div className="overview-grid">
+            <div className="overview-card"><h3>{overview.totalNotes || 0}</h3><p>Total Notes</p></div>
+            <div className="overview-card"><h3>{overview.totalUsers || 0}</h3><p>Total Students</p></div>
+            <div className="overview-card"><h3>{overview.totalDownloads || 0}</h3><p>Total Downloads</p></div>
           </div>
         </div>
 
