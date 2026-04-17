@@ -13,6 +13,7 @@ exports.uploadNote = async (req, res) => {
   try {
     const { title, subject, description, type, videoUrl, markdownContent } = req.body;
     const noteType = type || 'pdf';
+    console.log('Upload attempt - type:', noteType, 'file:', req.file ? 'present' : 'missing', 'cloudinary:', !!process.env.CLOUDINARY_CLOUD_NAME);
 
     let fileUrl = '';
     let extractedText = '';
