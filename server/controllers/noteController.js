@@ -19,12 +19,13 @@ exports.uploadNote = async (req, res) => {
 
     if (noteType === 'pdf' || noteType === 'image') {
       if (!req.file) return res.status(400).json({ success: false, message: 'Please upload a file' });
-      fileUrl = `/uploads/${req.file.filename}`;
+      fileUrl = req.file.path; // Cloudinary URL
 
       // Extract text from PDF for AI features
       if (noteType === 'pdf') {
         try {
-          const buffer = fs.readFileSync(req.file.path);
+          const response = await fetch(fileUrl);
+          const buffer = Buffer.from(await response.arrayBuffer());
           const data = await pdfParse(buffer);
           extractedText = data.text.slice(0, 8000);
         } catch (e) { /* silent fail - AI features optional */ }

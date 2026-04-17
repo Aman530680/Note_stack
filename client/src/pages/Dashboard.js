@@ -121,7 +121,8 @@ const Dashboard = () => {
     if (!selectedNote) return;
     try {
       await incrementDownload(selectedNote._id);
-      window.open(`${API_BASE}${selectedNote.fileUrl}`, '_blank');
+      const url = selectedNote.fileUrl.startsWith('http') ? selectedNote.fileUrl : `${API_BASE}${selectedNote.fileUrl}`;
+      window.open(url, '_blank');
       toast.success('Download started!');
     } catch { toast.error('Download failed!'); }
   };
@@ -165,10 +166,12 @@ const Dashboard = () => {
     finally { setAiLoading(''); }
   };
 
+  const getFileUrl = (url) => url?.startsWith('http') ? url : `${API_BASE}${url}`;
+
   // Render note content based on type
   const renderNoteContent = (note) => {
     if (note.type === 'image') return (
-      <img src={`${API_BASE}${note.fileUrl}`} alt={note.title} className="note-image-viewer" />
+      <img src={getFileUrl(note.fileUrl)} alt={note.title} className="note-image-viewer" />
     );
     if (note.type === 'video') {
       const videoId = getYouTubeId(note.videoUrl);
@@ -182,9 +185,8 @@ const Dashboard = () => {
         <ReactMarkdown>{note.markdownContent}</ReactMarkdown>
       </div>
     );
-    // Default: PDF
     return (
-      <iframe src={`${API_BASE}${note.fileUrl}`} title="PDF" width="100%" height="500px" style={{border:'none', borderRadius:'10px'}} />
+      <iframe src={getFileUrl(note.fileUrl)} title="PDF" width="100%" height="500px" style={{border:'none', borderRadius:'10px'}} />
     );
   };
 
