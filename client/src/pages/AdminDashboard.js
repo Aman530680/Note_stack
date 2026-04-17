@@ -334,7 +334,7 @@ const AdminDashboard = () => {
                             <FaTrash />
                           </button>
                           <a
-                            href={`https://notestack-api.onrender.com${note.fileUrl}`}
+                            href={`${process.env.REACT_APP_API_URL?.replace('/api', '') || 'https://notestack-api.onrender.com'}${note.fileUrl}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="action-btn view"
