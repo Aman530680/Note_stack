@@ -46,6 +46,7 @@ const Dashboard = () => {
   const [aiLoading, setAiLoading] = useState('');
   const [chatQuestion, setChatQuestion] = useState('');
   const [chatAnswer, setChatAnswer] = useState('');
+  const [recommendations, setRecommendations] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => { fetchMyNotes(); fetchAllNotes(); }, []);
