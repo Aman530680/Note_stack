@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fa';
 import {
   uploadNote,
+  getNotes,
   searchNotes,
   incrementDownload,
   submitRating,
@@ -41,7 +42,17 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchMyNotes();
+    fetchAllNotes();
   }, []);
+
+  const fetchAllNotes = async () => {
+    try {
+      const res = await getNotes();
+      setNotes(res.data.data);
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+    }
+  };
 
   const fetchMyNotes = async () => {
     try {
@@ -136,7 +147,10 @@ const Dashboard = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    
+    if (!searchQuery.trim()) {
+      fetchAllNotes();
+      return;
+    }
     try {
       const res = await searchNotes(searchQuery, '');
       setNotes(res.data.data);
@@ -348,14 +362,14 @@ const Dashboard = () => {
           </motion.section>
         </div>
 
-        {/* Search Results */}
+        {/* All Approved Notes / Search Results */}
         {notes.length > 0 && (
           <motion.section 
             className="search-results-section"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <h2>Search Results ({notes.length})</h2>
+            <h2>📚 All Approved Notes ({notes.length})</h2>
             <div className="notes-grid">
               {notes.map((note) => (
                 <div
