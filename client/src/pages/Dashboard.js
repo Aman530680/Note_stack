@@ -173,10 +173,6 @@ const Dashboard = () => {
   const getFileUrl = (url) => {
     if (!url) return '';
     if (!url.startsWith('http')) return `${API_BASE}${url}`;
-    // Force PDF inline viewing for Cloudinary raw files
-    if (url.includes('cloudinary.com') && url.includes('/raw/')) {
-      return url.replace('/raw/upload/', '/raw/upload/fl_attachment:false/');
-    }
     return url;
   };
 

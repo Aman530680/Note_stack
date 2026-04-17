@@ -12,7 +12,8 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: (req, file) => ({
     folder: 'notestack',
-    resource_type: file.mimetype === 'application/pdf' ? 'raw' : 'image',
+    resource_type: 'auto',
+    format: file.mimetype === 'application/pdf' ? 'pdf' : undefined,
     public_id: `note-${Date.now()}-${Math.round(Math.random() * 1e9)}`,
   }),
 });
