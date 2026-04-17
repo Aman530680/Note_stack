@@ -46,7 +46,7 @@ const Dashboard = () => {
   const [aiLoading, setAiLoading] = useState('');
   const [chatQuestion, setChatQuestion] = useState('');
   const [chatAnswer, setChatAnswer] = useState('');
-  const [recommendations, setRecommendations] = useState([]);
+  const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => { fetchMyNotes(); fetchAllNotes(); }, []);
 
@@ -206,6 +206,11 @@ const Dashboard = () => {
         {/* Top Bar */}
         <div className="top-bar">
           <h1>👋 {user?.name}</h1>
+          <div className="tab-btns">
+            <button className={`tab-btn ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}><FaFileAlt /> All Notes</button>
+            <button className={`tab-btn ${activeTab === 'mine' ? 'active' : ''}`} onClick={() => setActiveTab('mine')}><FaList /> My Notes</button>
+            <button className={`tab-btn ${activeTab === 'upload' ? 'active' : ''}`} onClick={() => setActiveTab('upload')}><FaUpload /> Upload</button>
+          </div>
           <form onSubmit={handleSearch} className="quick-search-form">
             <FaSearch className="search-icon" />
             <input type="text" placeholder="Search notes..." value={searchQuery}
@@ -213,100 +218,103 @@ const Dashboard = () => {
             <button type="submit" className="quick-search-btn">Search</button>
           </form>
           <div className="user-pills">
-            <div className="user-pill"><strong>✉</strong> {user?.email}</div>
             <div className="stat-pill"><FaTrophy /><span>{user?.contributionScore || 0}</span> Score</div>
             <div className="stat-pill"><span className="coin-icon">🪙</span><span>{user?.coins || 0}</span> Coins</div>
           </div>
         </div>
 
-        {/* Main 3-column Grid */}
-        <div className="main-grid">
-          {/* Col 1: My Notes */}
-          <div className="panel">
-            <h2><FaList /> My Notes</h2>
-            <div className="panel-body">
-              {myNotes.length === 0 ? <p className="no-data">No notes uploaded yet.</p> :
-                myNotes.map(note => (
-                  <div key={note._id} className="my-note-item">
-                    <div className="note-info">
-                      <h4><NoteTypeIcon type={note.type} /> {note.title}</h4>
-                      <p><strong>Subject:</strong> {note.subject}</p>
-                      <span className={`status-badge ${note.status.toLowerCase()}`}>{note.status}</span>
-                    </div>
-                    <div className="note-actions">
-                      <button onClick={() => setEditingNote({ id: note._id, title: note.title, subject: note.subject, description: note.description })} className="edit-btn"><FaEdit /> Edit</button>
-                      <button onClick={async () => { if (window.confirm('Delete?')) { await deleteOwnNote(note._id); toast.success('Deleted!'); fetchMyNotes(); } }} className="delete-btn"><FaTrash /> Delete</button>
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
+        {/* Content */}
+        <div className="tab-content">
 
-          {/* Col 2: Upload */}
-          <div className="panel">
-            <h2><FaUpload /> Upload Note</h2>
-            <div className="type-selector">
-              {['pdf', 'image', 'video', 'markdown'].map(t => (
-                <button key={t} type="button" className={`type-btn ${noteType === t ? 'active' : ''}`}
-                  onClick={() => { setNoteType(t); setFile(null); }}>
-                  <NoteTypeIcon type={t} /> {t.toUpperCase()}
-                </button>
-              ))}
-            </div>
-            <form onSubmit={handleUpload} className="upload-form-compact">
-              <input type="text" placeholder="Note Title" value={uploadData.title}
-                onChange={e => setUploadData({ ...uploadData, title: e.target.value })} required className="form-input" />
-              <input type="text" placeholder="Subject" value={uploadData.subject}
-                onChange={e => setUploadData({ ...uploadData, subject: e.target.value })} required className="form-input" />
-              <textarea placeholder="Description" value={uploadData.description}
-                onChange={e => setUploadData({ ...uploadData, description: e.target.value })} required className="form-textarea" rows="2" />
-              {(noteType === 'pdf' || noteType === 'image') && (
-                <div className="file-upload-wrapper">
-                  <input type="file" id="file-input" accept={noteType === 'pdf' ? '.pdf' : '.jpg,.jpeg,.png'}
-                    onChange={handleFileChange} className="file-input" />
-                  <label htmlFor="file-input" className="file-label">
-                    <NoteTypeIcon type={noteType} /> {file ? file.name : `Choose ${noteType.toUpperCase()}`}
-                  </label>
-                </div>
-              )}
-              {noteType === 'video' && (
-                <input type="url" placeholder="YouTube URL" value={uploadData.videoUrl}
-                  onChange={e => setUploadData({ ...uploadData, videoUrl: e.target.value })} required className="form-input" />
-              )}
-              {noteType === 'markdown' && (
-                <textarea placeholder="Markdown content..." value={uploadData.markdownContent}
-                  onChange={e => setUploadData({ ...uploadData, markdownContent: e.target.value })} required className="form-textarea" rows="5" />
-              )}
-              <button type="submit" className="upload-btn" disabled={uploading}>
-                {uploading ? 'Uploading...' : 'Upload Note'}
-              </button>
-            </form>
-          </div>
-
-          {/* Col 3: All Approved Notes */}
-          <div className="panel">
-            <h2><FaFileAlt /> All Notes ({notes.length})</h2>
-            <div className="panel-body">
-              {notes.length === 0 ? <p className="no-data">No approved notes yet.</p> :
-                <div className="notes-grid">
-                  {notes.map(note => (
-                    <div key={note._id} className="note-card" onClick={() => handleNoteClick(note)}>
-                      <div className="note-type-badge"><NoteTypeIcon type={note.type} /> {note.type}</div>
-                      <h3>{note.title}</h3>
-                      <p className="note-subject">{note.subject}</p>
-                      <p className="note-desc">{note.description}</p>
-                      <div className="note-stats">
-                        <span><FaStar /> {note.avgRating?.toFixed(1)}</span>
-                        <span><FaDownload /> {note.downloads}</span>
+          {/* ALL NOTES */}
+          {activeTab === 'all' && (
+            <div className="panel full-panel">
+              <div className="panel-body">
+                {notes.length === 0 ? <p className="no-data">No approved notes yet.</p> :
+                  <div className="notes-grid">
+                    {notes.map(note => (
+                      <div key={note._id} className="note-card" onClick={() => handleNoteClick(note)}>
+                        <div className="note-type-badge"><NoteTypeIcon type={note.type} /> {note.type}</div>
+                        <h3>{note.title}</h3>
+                        <p className="note-subject">{note.subject}</p>
+                        <p className="note-desc">{note.description}</p>
+                        <div className="note-stats">
+                          <span><FaStar /> {note.avgRating?.toFixed(1)}</span>
+                          <span><FaDownload /> {note.downloads}</span>
+                        </div>
+                        <p className="note-author">By: {note.uploadedBy?.name}</p>
                       </div>
-                      <p className="note-author">By: {note.uploadedBy?.name}</p>
-                    </div>
-                  ))}
-                </div>
-              }
+                    ))}
+                  </div>
+                }
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* MY NOTES */}
+          {activeTab === 'mine' && (
+            <div className="panel full-panel">
+              <div className="panel-body">
+                {myNotes.length === 0 ? <p className="no-data">No notes uploaded yet.</p> :
+                  myNotes.map(note => (
+                    <div key={note._id} className="my-note-item">
+                      <div className="note-info">
+                        <h4><NoteTypeIcon type={note.type} /> {note.title}</h4>
+                        <p><strong>Subject:</strong> {note.subject}</p>
+                        <span className={`status-badge ${note.status.toLowerCase()}`}>{note.status}</span>
+                      </div>
+                      <div className="note-actions">
+                        <button onClick={() => setEditingNote({ id: note._id, title: note.title, subject: note.subject, description: note.description })} className="edit-btn"><FaEdit /> Edit</button>
+                        <button onClick={async () => { if (window.confirm('Delete?')) { await deleteOwnNote(note._id); toast.success('Deleted!'); fetchMyNotes(); } }} className="delete-btn"><FaTrash /> Delete</button>
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+          )}
+
+          {/* UPLOAD */}
+          {activeTab === 'upload' && (
+            <div className="panel full-panel">
+              <div className="type-selector">
+                {['pdf', 'image', 'video', 'markdown'].map(t => (
+                  <button key={t} type="button" className={`type-btn ${noteType === t ? 'active' : ''}`}
+                    onClick={() => { setNoteType(t); setFile(null); }}>
+                    <NoteTypeIcon type={t} /> {t.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+              <form onSubmit={handleUpload} className="upload-form-compact">
+                <input type="text" placeholder="Note Title" value={uploadData.title}
+                  onChange={e => setUploadData({ ...uploadData, title: e.target.value })} required className="form-input" />
+                <input type="text" placeholder="Subject" value={uploadData.subject}
+                  onChange={e => setUploadData({ ...uploadData, subject: e.target.value })} required className="form-input" />
+                <textarea placeholder="Description" value={uploadData.description}
+                  onChange={e => setUploadData({ ...uploadData, description: e.target.value })} required className="form-textarea" rows="3" />
+                {(noteType === 'pdf' || noteType === 'image') && (
+                  <div className="file-upload-wrapper">
+                    <input type="file" id="file-input" accept={noteType === 'pdf' ? '.pdf' : '.jpg,.jpeg,.png'}
+                      onChange={handleFileChange} className="file-input" />
+                    <label htmlFor="file-input" className="file-label">
+                      <NoteTypeIcon type={noteType} /> {file ? file.name : `Choose ${noteType.toUpperCase()}`}
+                    </label>
+                  </div>
+                )}
+                {noteType === 'video' && (
+                  <input type="url" placeholder="YouTube URL" value={uploadData.videoUrl}
+                    onChange={e => setUploadData({ ...uploadData, videoUrl: e.target.value })} required className="form-input" />
+                )}
+                {noteType === 'markdown' && (
+                  <textarea placeholder="Markdown content..." value={uploadData.markdownContent}
+                    onChange={e => setUploadData({ ...uploadData, markdownContent: e.target.value })} required className="form-textarea" rows="6" />
+                )}
+                <button type="submit" className="upload-btn" disabled={uploading}>
+                  {uploading ? 'Uploading...' : 'Upload Note'}
+                </button>
+              </form>
+            </div>
+          )}
         </div>
       </div>
 

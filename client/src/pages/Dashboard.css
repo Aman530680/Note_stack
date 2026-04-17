@@ -102,14 +102,47 @@
 .stat-pill svg, .stat-pill .coin-icon { color: #ffd700; font-size: 0.9rem; }
 .stat-pill span { font-weight: 700; }
 
-/* ── Main 3-column grid ── */
-.main-grid {
+/* ── Tab Buttons ── */
+.tab-btns {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: transparent;
+}
+
+.tab-btn:hover:not(.active) { background: rgba(255,255,255,0.12); }
+
+/* ── Tab Content ── */
+.tab-content {
   flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.4fr;
-  gap: 0.7rem;
   overflow: hidden;
   min-height: 0;
+}
+
+.full-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .panel {
