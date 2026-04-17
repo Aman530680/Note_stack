@@ -190,13 +190,15 @@ const AdminDashboard = () => {
           </motion.div>
         </div>
 
-        {/* Notifications Section */}
-        <motion.section 
-          className="notifications-section"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
+        {/* Middle Row: Notifications + Comments */}
+        <div className="admin-middle-row">
+          {/* Notifications Section */}
+          <motion.section
+            className="notifications-section"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
           <div className="section-header">
             <h2>
               <FaBell /> Notifications 
@@ -228,15 +230,15 @@ const AdminDashboard = () => {
               ))
             )}
           </div>
-        </motion.section>
+          </motion.section>
 
-        {/* Comments Approval Section */}
-        <motion.section 
-          className="comments-section"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.65 }}
-        >
+          {/* Comments Approval Section */}
+          <motion.section
+            className="comments-section"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.65 }}
+          >
           <h2>💬 Comments Pending Approval</h2>
           {comments.filter(c => !c.commentApproved).length === 0 ? (
             <p className="no-data">No comments pending approval</p>
@@ -260,10 +262,11 @@ const AdminDashboard = () => {
               ))}
             </div>
           )}
-        </motion.section>
+          </motion.section>
+        </div>
 
         {/* Notes Management Section */}
-        <motion.section 
+        <motion.section
           className="notes-management-section"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

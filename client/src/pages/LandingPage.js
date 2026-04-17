@@ -215,20 +215,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="stats-section">
-        <div className="section-container">
-          <div className="stats-grid">
-            {stats.map((stat, i) => (
-              <div key={i} className="stat-card" data-aos="zoom-in" data-aos-delay={i * 100}>
-                <div className="stat-icon">{stat.icon}</div>
-                <h3>{stat.count}</h3>
-                <p>{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* How It Works */}
       <section className="how-section">
