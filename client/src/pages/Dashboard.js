@@ -309,118 +309,103 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-        {editingNote && (
-          <div className="modal-overlay" onClick={() => setEditingNote(null)}>
-            <motion.div className="modal-content" onClick={e => e.stopPropagation()} initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
-              <h2>Edit Note</h2>
-              <form onSubmit={async (e) => { e.preventDefault(); await updateNote(editingNote.id, editingNote); toast.success('Updated!'); setEditingNote(null); fetchMyNotes(); }}>
-                <input type="text" value={editingNote.title} onChange={e => setEditingNote({ ...editingNote, title: e.target.value })} placeholder="Title" required className="form-input" />
-                <input type="text" value={editingNote.subject} onChange={e => setEditingNote({ ...editingNote, subject: e.target.value })} placeholder="Subject" required className="form-input" />
-                <textarea value={editingNote.description} onChange={e => setEditingNote({ ...editingNote, description: e.target.value })} placeholder="Description" required className="form-textarea" rows="4" />
-                <div className="modal-buttons">
-                  <button type="submit" className="save-btn">Save</button>
-                  <button type="button" onClick={() => setEditingNote(null)} className="cancel-btn">Cancel</button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
 
-        {/* Note Viewer Modal */}
-        {selectedNote && (
-          <motion.div className="viewer-modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="viewer-overlay" onClick={() => setSelectedNote(null)}></div>
-            <div className="viewer-content">
-              <div className="viewer-header">
-                <h2><NoteTypeIcon type={selectedNote.type} /> {selectedNote.title}</h2>
-                <button onClick={() => setSelectedNote(null)} className="close-btn">✕</button>
+      {/* Edit Modal */}
+      {editingNote && (
+        <div className="modal-overlay" onClick={() => setEditingNote(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h2>Edit Note</h2>
+            <form onSubmit={async (e) => { e.preventDefault(); await updateNote(editingNote.id, editingNote); toast.success('Updated!'); setEditingNote(null); fetchMyNotes(); }}>
+              <input type="text" value={editingNote.title} onChange={e => setEditingNote({ ...editingNote, title: e.target.value })} placeholder="Title" required className="form-input" />
+              <input type="text" value={editingNote.subject} onChange={e => setEditingNote({ ...editingNote, subject: e.target.value })} placeholder="Subject" required className="form-input" />
+              <textarea value={editingNote.description} onChange={e => setEditingNote({ ...editingNote, description: e.target.value })} placeholder="Description" required className="form-textarea" rows="4" />
+              <div className="modal-buttons">
+                <button type="submit" className="save-btn">Save</button>
+                <button type="button" onClick={() => setEditingNote(null)} className="cancel-btn">Cancel</button>
               </div>
+            </form>
+          </div>
+        </div>
+      )}
 
-              {/* Content */}
-              <div className="pdf-viewer">{renderNoteContent(selectedNote)}</div>
-
-              {/* Download (only for pdf/image) */}
-              {(selectedNote.type === 'pdf' || selectedNote.type === 'image') && (
-                <div className="viewer-actions">
-                  <button onClick={handleDownload} className="download-btn"><FaDownload /> Download</button>
-                </div>
-              )}
-
-              {/* AI Features */}
-              <div className="ai-section">
-                <h3><FaRobot /> AI Features</h3>
-
-                {/* Summary */}
-                <div className="ai-feature">
-                  <button onClick={handleSummarize} className="ai-btn" disabled={aiLoading === 'summary'}>
-                    {aiLoading === 'summary' ? '⏳ Generating...' : '📝 Generate Summary'}
-                  </button>
-                  {selectedNote.summary && <div className="ai-result"><p>{selectedNote.summary}</p></div>}
-                </div>
-
-                {/* Tags */}
-                <div className="ai-feature">
-                  <button onClick={handleGenerateTags} className="ai-btn" disabled={aiLoading === 'tags'}>
-                    {aiLoading === 'tags' ? '⏳ Extracting...' : <><FaTags /> Extract Tags</>}
-                  </button>
-                  {selectedNote.tags?.length > 0 && (
-                    <div className="tags-row">{selectedNote.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
-                  )}
-                </div>
-
-                {/* Chat */}
-                {(selectedNote.type === 'pdf' || selectedNote.type === 'markdown') && (
-                  <div className="ai-feature">
-                    <h4>💬 Ask a Question</h4>
-                    <div className="chat-input-row">
-                      <input type="text" placeholder="Ask anything about this note..."
-                        value={chatQuestion} onChange={e => setChatQuestion(e.target.value)} className="chat-input" />
-                      <button onClick={handleChat} className="ai-btn" disabled={aiLoading === 'chat'}>
-                        {aiLoading === 'chat' ? '⏳' : 'Ask'}
-                      </button>
-                    </div>
-                    {chatAnswer && <div className="ai-result"><p>{chatAnswer}</p></div>}
-                  </div>
+      {/* Note Viewer Modal */}
+      {selectedNote && (
+        <div className="viewer-modal">
+          <div className="viewer-overlay" onClick={() => setSelectedNote(null)}></div>
+          <div className="viewer-content">
+            <div className="viewer-header">
+              <h2><NoteTypeIcon type={selectedNote.type} /> {selectedNote.title}</h2>
+              <button onClick={() => setSelectedNote(null)} className="close-btn">✕</button>
+            </div>
+            <div className="pdf-viewer">{renderNoteContent(selectedNote)}</div>
+            {(selectedNote.type === 'pdf' || selectedNote.type === 'image') && (
+              <div className="viewer-actions">
+                <button onClick={handleDownload} className="download-btn"><FaDownload /> Download</button>
+              </div>
+            )}
+            <div className="ai-section">
+              <h3><FaRobot /> AI Features</h3>
+              <div className="ai-feature">
+                <button onClick={handleSummarize} className="ai-btn" disabled={aiLoading === 'summary'}>
+                  {aiLoading === 'summary' ? '⏳ Generating...' : '📝 Generate Summary'}
+                </button>
+                {selectedNote.summary && <div className="ai-result"><p>{selectedNote.summary}</p></div>}
+              </div>
+              <div className="ai-feature">
+                <button onClick={handleGenerateTags} className="ai-btn" disabled={aiLoading === 'tags'}>
+                  {aiLoading === 'tags' ? '⏳ Extracting...' : <><FaTags /> Extract Tags</>}
+                </button>
+                {selectedNote.tags?.length > 0 && (
+                  <div className="tags-row">{selectedNote.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
                 )}
               </div>
-
-              {/* Recommendations */}
-              {recommendations.length > 0 && (
-                <div className="recommendations-section">
-                  <h3>🔗 Recommended Notes</h3>
-                  <div className="rec-grid">
-                    {recommendations.map(r => (
-                      <div key={r._id} className="rec-card" onClick={() => handleNoteClick(r)}>
-                        <h4>{r.title}</h4>
-                        <p>{r.subject}</p>
-                        <span><FaStar /> {r.avgRating?.toFixed(1)}</span>
-                      </div>
+              {(selectedNote.type === 'pdf' || selectedNote.type === 'markdown') && (
+                <div className="ai-feature">
+                  <h4>💬 Ask a Question</h4>
+                  <div className="chat-input-row">
+                    <input type="text" placeholder="Ask anything about this note..."
+                      value={chatQuestion} onChange={e => setChatQuestion(e.target.value)} className="chat-input" />
+                    <button onClick={handleChat} className="ai-btn" disabled={aiLoading === 'chat'}>
+                      {aiLoading === 'chat' ? '⏳' : 'Ask'}
+                    </button>
+                  </div>
+                  {chatAnswer && <div className="ai-result"><p>{chatAnswer}</p></div>}
+                </div>
+              )}
+            </div>
+            {recommendations.length > 0 && (
+              <div className="recommendations-section">
+                <h3>🔗 Recommended Notes</h3>
+                <div className="rec-grid">
+                  {recommendations.map(r => (
+                    <div key={r._id} className="rec-card" onClick={() => handleNoteClick(r)}>
+                      <h4>{r.title}</h4>
+                      <p>{r.subject}</p>
+                      <span><FaStar /> {r.avgRating?.toFixed(1)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="rating-section">
+              <h3>Rate this Note</h3>
+              {hasRated ? (
+                <div className="already-rated"><FaCheckCircle /> Already rated</div>
+              ) : (
+                <>
+                  <div className="star-rating">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <FaStar key={star} className={star <= rating ? 'star active' : 'star'} onClick={() => setRating(star)} />
                     ))}
                   </div>
-                </div>
+                  <textarea placeholder="Optional feedback..." value={comment} onChange={e => setComment(e.target.value)} className="comment-box" rows="3" />
+                  <button onClick={handleRatingSubmit} className="submit-rating-btn">Submit Rating</button>
+                </>
               )}
-
-              {/* Rating */}
-              <div className="rating-section">
-                <h3>Rate this Note</h3>
-                {hasRated ? (
-                  <div className="already-rated"><FaCheckCircle /> Already rated</div>
-                ) : (
-                  <>
-                    <div className="star-rating">
-                      {[1, 2, 3, 4, 5].map(star => (
-                        <FaStar key={star} className={star <= rating ? 'star active' : 'star'} onClick={() => setRating(star)} />
-                      ))}
-                    </div>
-                    <textarea placeholder="Optional feedback..." value={comment} onChange={e => setComment(e.target.value)} className="comment-box" rows="3" />
-                    <button onClick={handleRatingSubmit} className="submit-rating-btn">Submit Rating</button>
-                  </>
-                )}
-              </div>
             </div>
-          </motion.div>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
