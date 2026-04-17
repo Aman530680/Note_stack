@@ -10,7 +10,7 @@ import {
   FaFilePdf, FaDownload, FaStar, FaBell, 
   FaChartLine, FaTrophy, FaEnvelope, FaUser, FaCode,
   FaUserGraduate, FaCheckCircle, FaQuestionCircle,
-  FaGithub, FaLinkedin, FaTwitter, FaBookOpen, FaUsers, FaAward
+  FaBookOpen, FaUsers, FaAward
 } from 'react-icons/fa';
 import './LandingPage.css';
 
@@ -292,32 +292,6 @@ const LandingPage = () => {
                 <p>{faq.a}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Banner */}
-      <section className="cta-section">
-        <div className="cta-content" data-aos="zoom-in">
-          <h2>Ready to Start Learning?</h2>
-          <p>Join thousands of students already sharing and discovering notes</p>
-          <div className="cta-buttons">
-            <motion.button
-              className="cta-btn primary"
-              onClick={handleExplore}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Get Started Free
-            </motion.button>
-            <motion.a
-              href="/login"
-              className="cta-btn secondary"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Login Now
-            </motion.a>
           </div>
         </div>
       </section>

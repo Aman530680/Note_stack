@@ -171,11 +171,15 @@
 }
 
 @media (max-width: 768px) {
-  .signup-card {
-    padding: 2rem;
-  }
-  
-  .signup-title {
-    font-size: 2rem;
-  }
+  .signup-card { padding: 1.5rem; }
+  .signup-title { font-size: 1.8rem; }
+  .signup-subtitle { font-size: 0.95rem; }
+  .signup-page { padding: 80px 15px 15px; }
+}
+
+@media (max-width: 480px) {
+  .signup-card { padding: 1.2rem; border-radius: 15px; }
+  .signup-title { font-size: 1.5rem; }
+  .form-input { padding: 0.8rem 1rem; font-size: 0.95rem; }
+  .submit-btn { font-size: 1rem; }
 }

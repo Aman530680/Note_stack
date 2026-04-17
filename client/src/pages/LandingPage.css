@@ -818,41 +818,62 @@
   box-shadow: 0 15px 35px rgba(0,0,0,0.3);
 }
 
-/* Responsive */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 3rem;
-    letter-spacing: 4px;
+  /* Navbar */
+  .navbar-container { padding: 0.8rem 1rem; }
+  .navbar-logo { font-size: 1.4rem; }
+  .navbar-menu { gap: 0.6rem; }
+  .navbar-menu li a { font-size: 0.8rem; }
+  .nav-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+
+  /* Hero */
+  .hero-title { font-size: 2.5rem; letter-spacing: 3px; }
+  .hero-tagline { font-size: 1.1rem; }
+  .hero-subtitle { font-size: 0.95rem; }
+  .explore-btn { padding: 0.9rem 1.8rem; font-size: 1rem; }
+  .float-element { display: none; }
+
+  /* Sections */
+  .about-section, .features-section, .contact-section,
+  .how-section, .testimonials-section, .faq-section, .cta-section {
+    padding: 70px 15px 40px;
   }
-  
-  .hero-tagline {
-    font-size: 1.3rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-  
-  .explore-btn {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-  }
-  
-  .section-header h2 {
-    font-size: 2.5rem;
-  }
-  
-  .section-header p {
-    font-size: 1.2rem;
-  }
-  
-  .navbar-menu {
-    gap: 1rem;
-    font-size: 0.9rem;
-  }
-  
-  .about-grid,
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
+  .section-header h2 { font-size: 2rem; }
+  .section-header p { font-size: 1rem; }
+  .section-header { margin-bottom: 2rem; }
+
+  /* Grids → single column */
+  .about-grid, .features-grid, .steps-grid,
+  .testimonials-grid, .faq-grid { grid-template-columns: 1fr; }
+
+  /* Stats */
+  .stats-section { padding: 40px 15px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .stat-card { padding: 1.2rem; }
+  .stat-card h3 { font-size: 2rem; }
+  .stat-icon { font-size: 2rem; }
+
+  /* FAQ */
+  .faq-grid { grid-template-columns: 1fr; }
+  .faq-card:hover { transform: none; }
+
+  /* CTA */
+  .cta-content h2 { font-size: 2rem; }
+  .cta-content p { font-size: 1rem; margin-bottom: 2rem; }
+  .cta-buttons { flex-direction: column; align-items: center; }
+  .cta-btn { width: 100%; max-width: 280px; text-align: center; }
+
+  /* Contact */
+  .contact-card { padding: 1.5rem; }
+  .profile-section h3 { font-size: 1.8rem; }
+  .detail-item:hover { transform: none; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 1.8rem; letter-spacing: 2px; }
+  .hero-tagline { font-size: 0.95rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .navbar-menu { gap: 0.4rem; }
+  .nav-btn { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
 }

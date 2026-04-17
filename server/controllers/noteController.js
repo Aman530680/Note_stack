@@ -1,4 +1,7 @@
 const { Note, User, Notification } = require('../models');
+const pdfParse = require('pdf-parse');
+const fs = require('fs');
+const path = require('path');
 
 const calcRankScore = (note) => {
   const days = (Date.now() - new Date(note.createdAt)) / (1000 * 60 * 60 * 24);
@@ -8,12 +11,39 @@ const calcRankScore = (note) => {
 
 exports.uploadNote = async (req, res) => {
   try {
-    const { title, subject, description } = req.body;
-    if (!req.file) return res.status(400).json({ success: false, message: 'Please upload a PDF file' });
+    const { title, subject, description, type, videoUrl, markdownContent } = req.body;
+    const noteType = type || 'pdf';
+
+    let fileUrl = '';
+    let extractedText = '';
+
+    if (noteType === 'pdf' || noteType === 'image') {
+      if (!req.file) return res.status(400).json({ success: false, message: 'Please upload a file' });
+      fileUrl = `/uploads/${req.file.filename}`;
+
+      // Extract text from PDF for AI features
+      if (noteType === 'pdf') {
+        try {
+          const buffer = fs.readFileSync(req.file.path);
+          const data = await pdfParse(buffer);
+          extractedText = data.text.slice(0, 8000);
+        } catch (e) { /* silent fail - AI features optional */ }
+      }
+    }
+
+    if (noteType === 'video' && !videoUrl)
+      return res.status(400).json({ success: false, message: 'Video URL is required' });
+
+    if (noteType === 'markdown' && !markdownContent)
+      return res.status(400).json({ success: false, message: 'Markdown content is required' });
 
     const note = await Note.create({
       title, subject, description,
-      fileUrl: `/uploads/${req.file.filename}`,
+      type: noteType,
+      fileUrl,
+      videoUrl: videoUrl || '',
+      markdownContent: markdownContent || '',
+      extractedText,
       uploadedBy: req.user.id,
       status: 'Pending'
     });
@@ -45,14 +75,16 @@ exports.getNotes = async (req, res) => {
 
 exports.searchNotes = async (req, res) => {
   try {
-    const { query, subject } = req.query;
+    const { query, subject, tag } = req.query;
     const filter = { status: 'Approved' };
 
     if (query) filter.$or = [
       { title: { $regex: query, $options: 'i' } },
-      { description: { $regex: query, $options: 'i' } }
+      { description: { $regex: query, $options: 'i' } },
+      { tags: { $regex: query, $options: 'i' } }
     ];
     if (subject) filter.subject = { $regex: subject, $options: 'i' };
+    if (tag) filter.tags = { $in: [tag.toLowerCase()] };
 
     const notes = await Note.find(filter)
       .populate('uploadedBy', 'name email')

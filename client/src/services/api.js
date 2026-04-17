@@ -57,4 +57,17 @@ export const markAsSeen = (id) => api.put(`/notifications/${id}/seen`);
 export const markAllAsSeen = () => api.put('/notifications/seen/all');
 export const getUnseenCount = () => api.get('/notifications/unseen/count');
 
+// AI
+export const summarizeNote = (noteId) => api.post(`/ai/summarize/${noteId}`);
+export const generateTags = (noteId) => api.post(`/ai/tags/${noteId}`);
+export const recommendNotes = (noteId) => api.get(`/ai/recommend/${noteId}`);
+export const chatWithNote = (noteId, question) => api.post(`/ai/chat/${noteId}`, { question });
+
+// Analytics (Admin)
+export const getTopDownloads = () => api.get('/analytics/top-downloads');
+export const getLeaderboard = () => api.get('/analytics/leaderboard');
+export const getSubjectStats = () => api.get('/analytics/subject-stats');
+export const getWeeklyUploads = () => api.get('/analytics/weekly-uploads');
+export const getAnalyticsOverview = () => api.get('/analytics/overview');
+
 export default api;

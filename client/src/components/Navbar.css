@@ -133,12 +133,17 @@
 }
 
 @media (max-width: 768px) {
-  .navbar-menu {
-    gap: 1rem;
-    font-size: 0.9rem;
-  }
-  
-  .navbar-logo {
-    font-size: 1.5rem;
-  }
+  .navbar-container { padding: 0.8rem 1rem; }
+  .navbar-logo { font-size: 1.4rem; letter-spacing: 1px; }
+  .navbar-menu { gap: 0.6rem; }
+  .navbar-menu li a { font-size: 0.8rem; }
+  .nav-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+  .logout-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+  .user-info { font-size: 0.85rem; }
+}
+
+@media (max-width: 480px) {
+  .navbar-logo { font-size: 1.2rem; }
+  .navbar-menu { gap: 0.3rem; }
+  .nav-btn, .logout-btn { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
 }

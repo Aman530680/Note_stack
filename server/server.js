@@ -43,6 +43,8 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/notes', require('./routes/noteRoutes'));
 app.use('/api/ratings', require('./routes/ratingRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/ai', require('./routes/aiRoutes'));
+app.use('/api/analytics', require('./routes/analyticsRoutes'));
 
 app.get('/', (req, res) => res.json({ message: 'NOTESTACK API running' }));
 

@@ -9,6 +9,7 @@ import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import AnalyticsDashboard from './pages/AnalyticsDashboard';
 
 function App() {
   return (
@@ -36,6 +37,16 @@ function App() {
             element={
               <ProtectedRoute adminOnly={true}>
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Analytics Route */}
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute adminOnly={true}>
+                <AnalyticsDashboard />
               </ProtectedRoute>
             }
           />

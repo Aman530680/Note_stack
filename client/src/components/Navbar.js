@@ -28,6 +28,9 @@ const Navbar = () => {
                   Dashboard
                 </Link>
               </li>
+              {user.role === 'admin' && (
+                <li><Link to="/analytics">📊 Analytics</Link></li>
+              )}
               <li className="user-info">
                 <FaUserCircle /> {user.name}
               </li>
