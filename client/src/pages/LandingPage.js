@@ -8,7 +8,9 @@ import {
   FaRocket, FaEye, FaLightbulb, FaRoad,
   FaLock, FaUserShield, FaFileUpload, FaSearch, 
   FaFilePdf, FaDownload, FaStar, FaBell, 
-  FaChartLine, FaTrophy, FaEnvelope, FaUser, FaCode
+  FaChartLine, FaTrophy, FaEnvelope, FaUser, FaCode,
+  FaUserGraduate, FaCheckCircle, FaQuestionCircle,
+  FaGithub, FaLinkedin, FaTwitter, FaBookOpen, FaUsers, FaAward
 } from 'react-icons/fa';
 import './LandingPage.css';
 
@@ -34,6 +36,32 @@ const LandingPage = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const stats = [
+    { icon: <FaBookOpen />, count: '500+', label: 'Notes Shared' },
+    { icon: <FaUsers />, count: '1000+', label: 'Students' },
+    { icon: <FaDownload />, count: '5000+', label: 'Downloads' },
+    { icon: <FaAward />, count: '100%', label: 'Quality Assured' }
+  ];
+
+  const steps = [
+    { step: '01', icon: <FaUserGraduate />, title: 'Create Account', desc: 'Sign up for free in seconds. No credit card required.' },
+    { step: '02', icon: <FaFileUpload />, title: 'Upload Your Notes', desc: 'Upload PDF notes with title, subject and description.' },
+    { step: '03', icon: <FaCheckCircle />, title: 'Get Approved & Share', desc: 'Admin reviews and approves. Your notes go live instantly.' }
+  ];
+
+  const testimonials = [
+    { name: 'Priya Sharma', role: 'CSE Student', text: 'NOTESTACK helped me find quality notes for my exams. The rating system ensures only the best content is available!', stars: 5 },
+    { name: 'Ravi Kumar', role: 'ECE Student', text: 'I uploaded my notes and earned contribution points. Great platform for sharing knowledge with fellow students.', stars: 5 },
+    { name: 'Sneha Patel', role: 'IT Student', text: 'The PDF viewer is amazing! I can preview notes before downloading. Saves so much time.', stars: 4 }
+  ];
+
+  const faqs = [
+    { q: 'Is NOTESTACK free to use?', a: 'Yes! NOTESTACK is completely free for all students. Sign up and start sharing notes today.' },
+    { q: 'How are notes approved?', a: 'All uploaded notes go through admin review to ensure quality and relevance before being published.' },
+    { q: 'What file formats are supported?', a: 'Currently we support PDF files only to ensure consistent viewing experience across all devices.' },
+    { q: 'How do I earn contribution points?', a: 'Upload quality notes that get approved and downloaded by other students to earn contribution points.' }
+  ];
 
   const features = [
     { icon: <FaLock />, title: 'Secure Authentication', description: 'JWT-based authentication with bcrypt password hashing ensures your data is always protected.' },
@@ -183,6 +211,113 @@ const LandingPage = () => {
                 <p>{feature.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="stats-section">
+        <div className="section-container">
+          <div className="stats-grid">
+            {stats.map((stat, i) => (
+              <div key={i} className="stat-card" data-aos="zoom-in" data-aos-delay={i * 100}>
+                <div className="stat-icon">{stat.icon}</div>
+                <h3>{stat.count}</h3>
+                <p>{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="how-section">
+        <div className="section-container">
+          <div className="section-header" data-aos="fade-down">
+            <h2>How It Works</h2>
+            <p>Get started in 3 simple steps</p>
+          </div>
+          <div className="steps-grid">
+            {steps.map((s, i) => (
+              <div key={i} className="step-card" data-aos="fade-up" data-aos-delay={i * 150}>
+                <div className="step-number">{s.step}</div>
+                <div className="step-icon">{s.icon}</div>
+                <h3>{s.title}</h3>
+                <p>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="testimonials-section">
+        <div className="section-container">
+          <div className="section-header" data-aos="fade-down">
+            <h2>What Students Say</h2>
+            <p>Trusted by students across colleges</p>
+          </div>
+          <div className="testimonials-grid">
+            {testimonials.map((t, i) => (
+              <div key={i} className="testimonial-card" data-aos="fade-up" data-aos-delay={i * 150}>
+                <div className="stars">{[...Array(t.stars)].map((_, j) => <FaStar key={j} />)}</div>
+                <p className="testimonial-text">"{t.text}"</p>
+                <div className="testimonial-author">
+                  <div className="author-avatar">{t.name[0]}</div>
+                  <div>
+                    <h4>{t.name}</h4>
+                    <span>{t.role}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="faq-section">
+        <div className="section-container">
+          <div className="section-header" data-aos="fade-down">
+            <h2>Frequently Asked Questions</h2>
+            <p>Everything you need to know</p>
+          </div>
+          <div className="faq-grid">
+            {faqs.map((faq, i) => (
+              <div key={i} className="faq-card" data-aos="fade-up" data-aos-delay={i * 100}>
+                <div className="faq-question">
+                  <FaQuestionCircle className="faq-icon" />
+                  <h4>{faq.q}</h4>
+                </div>
+                <p>{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section className="cta-section">
+        <div className="cta-content" data-aos="zoom-in">
+          <h2>Ready to Start Learning?</h2>
+          <p>Join thousands of students already sharing and discovering notes</p>
+          <div className="cta-buttons">
+            <motion.button
+              className="cta-btn primary"
+              onClick={handleExplore}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Get Started Free
+            </motion.button>
+            <motion.a
+              href="/login"
+              className="cta-btn secondary"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Login Now
+            </motion.a>
           </div>
         </div>
       </section>
