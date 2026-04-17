@@ -3,7 +3,6 @@ import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import {
   FaUpload, FaSearch, FaDownload, FaStar,
@@ -204,42 +203,28 @@ const Dashboard = () => {
       <ToastContainer position="top-right" autoClose={3000} />
 
       <div className="dashboard-container">
-        {/* Header */}
-        <div className="dashboard-header">
-          <h1>Welcome, {user?.name}!</h1>
-          <div className="header-info">
-            <div className="user-info-card">
-              <p><strong>Email:</strong> {user?.email}</p>
-              <p><strong>Contact:</strong> {user?.contact}</p>
-            </div>
-            <div className="user-stats">
-              <div className="stat-card">
-                <FaTrophy />
-                <div><h3>{user?.contributionScore || 0}</h3><p>Score</p></div>
-              </div>
-              <div className="stat-card coins">
-                <span className="coin-icon">🪙</span>
-                <div><h3>{user?.coins || 0}</h3><p>Coins</p></div>
-              </div>
-            </div>
+        {/* Top Bar */}
+        <div className="top-bar">
+          <h1>👋 {user?.name}</h1>
+          <form onSubmit={handleSearch} className="quick-search-form">
+            <FaSearch className="search-icon" />
+            <input type="text" placeholder="Search notes..." value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)} className="quick-search-input" />
+            <button type="submit" className="quick-search-btn">Search</button>
+          </form>
+          <div className="user-pills">
+            <div className="user-pill"><strong>✉</strong> {user?.email}</div>
+            <div className="stat-pill"><FaTrophy /><span>{user?.contributionScore || 0}</span> Score</div>
+            <div className="stat-pill"><span className="coin-icon">🪙</span><span>{user?.coins || 0}</span> Coins</div>
           </div>
         </div>
 
-        {/* Search */}
-        <div className="search-bar-top">
-          <form onSubmit={handleSearch} className="quick-search-form">
-            <FaSearch className="search-icon" />
-            <input type="text" placeholder="Search notes by title, subject, or tag..."
-              value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="quick-search-input" />
-            <button type="submit" className="quick-search-btn">Search</button>
-          </form>
-        </div>
-
-        <div className="split-container">
-          {/* My Notes */}
-          <motion.section className="left-section" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <h2><FaList /> My Uploaded Notes</h2>
-            <div className="my-notes-list">
+        {/* Main 3-column Grid */}
+        <div className="main-grid">
+          {/* Col 1: My Notes */}
+          <div className="panel">
+            <h2><FaList /> My Notes</h2>
+            <div className="panel-body">
               {myNotes.length === 0 ? <p className="no-data">No notes uploaded yet.</p> :
                 myNotes.map(note => (
                   <div key={note._id} className="my-note-item">
@@ -247,9 +232,6 @@ const Dashboard = () => {
                       <h4><NoteTypeIcon type={note.type} /> {note.title}</h4>
                       <p><strong>Subject:</strong> {note.subject}</p>
                       <span className={`status-badge ${note.status.toLowerCase()}`}>{note.status}</span>
-                      {note.tags?.length > 0 && (
-                        <div className="tags-row">{note.tags.slice(0, 3).map(t => <span key={t} className="tag">{t}</span>)}</div>
-                      )}
                     </div>
                     <div className="note-actions">
                       <button onClick={() => setEditingNote({ id: note._id, title: note.title, subject: note.subject, description: note.description })} className="edit-btn"><FaEdit /> Edit</button>
@@ -259,86 +241,74 @@ const Dashboard = () => {
                 ))
               }
             </div>
-          </motion.section>
+          </div>
 
-          {/* Upload */}
-          <motion.section className="right-section" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-            <h2><FaUpload /> Upload New Note</h2>
-
-            {/* Type Selector */}
+          {/* Col 2: Upload */}
+          <div className="panel">
+            <h2><FaUpload /> Upload Note</h2>
             <div className="type-selector">
               {['pdf', 'image', 'video', 'markdown'].map(t => (
-                <button key={t} type="button"
-                  className={`type-btn ${noteType === t ? 'active' : ''}`}
+                <button key={t} type="button" className={`type-btn ${noteType === t ? 'active' : ''}`}
                   onClick={() => { setNoteType(t); setFile(null); }}>
                   <NoteTypeIcon type={t} /> {t.toUpperCase()}
                 </button>
               ))}
             </div>
-
             <form onSubmit={handleUpload} className="upload-form-compact">
-              <input type="text" name="title" placeholder="Note Title" value={uploadData.title}
+              <input type="text" placeholder="Note Title" value={uploadData.title}
                 onChange={e => setUploadData({ ...uploadData, title: e.target.value })} required className="form-input" />
-              <input type="text" name="subject" placeholder="Subject" value={uploadData.subject}
+              <input type="text" placeholder="Subject" value={uploadData.subject}
                 onChange={e => setUploadData({ ...uploadData, subject: e.target.value })} required className="form-input" />
-              <textarea name="description" placeholder="Description" value={uploadData.description}
-                onChange={e => setUploadData({ ...uploadData, description: e.target.value })} required className="form-textarea" rows="3" />
-
+              <textarea placeholder="Description" value={uploadData.description}
+                onChange={e => setUploadData({ ...uploadData, description: e.target.value })} required className="form-textarea" rows="2" />
               {(noteType === 'pdf' || noteType === 'image') && (
                 <div className="file-upload-wrapper">
                   <input type="file" id="file-input" accept={noteType === 'pdf' ? '.pdf' : '.jpg,.jpeg,.png'}
                     onChange={handleFileChange} className="file-input" />
                   <label htmlFor="file-input" className="file-label">
-                    <NoteTypeIcon type={noteType} /> {file ? file.name : `Choose ${noteType.toUpperCase()} File`}
+                    <NoteTypeIcon type={noteType} /> {file ? file.name : `Choose ${noteType.toUpperCase()}`}
                   </label>
                 </div>
               )}
-
               {noteType === 'video' && (
-                <input type="url" placeholder="YouTube URL (e.g. https://youtube.com/watch?v=...)"
-                  value={uploadData.videoUrl} onChange={e => setUploadData({ ...uploadData, videoUrl: e.target.value })}
-                  required className="form-input" />
+                <input type="url" placeholder="YouTube URL" value={uploadData.videoUrl}
+                  onChange={e => setUploadData({ ...uploadData, videoUrl: e.target.value })} required className="form-input" />
               )}
-
               {noteType === 'markdown' && (
-                <textarea placeholder="Write your markdown content here..." value={uploadData.markdownContent}
-                  onChange={e => setUploadData({ ...uploadData, markdownContent: e.target.value })}
-                  required className="form-textarea" rows="8" />
+                <textarea placeholder="Markdown content..." value={uploadData.markdownContent}
+                  onChange={e => setUploadData({ ...uploadData, markdownContent: e.target.value })} required className="form-textarea" rows="5" />
               )}
-
               <button type="submit" className="upload-btn" disabled={uploading}>
                 {uploading ? 'Uploading...' : 'Upload Note'}
               </button>
             </form>
-          </motion.section>
-        </div>
+          </div>
 
-        {/* All Notes */}
-        {notes.length > 0 && (
-          <motion.section className="search-results-section" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2>📚 All Approved Notes ({notes.length})</h2>
-            <div className="notes-grid">
-              {notes.map(note => (
-                <div key={note._id} className="note-card" onClick={() => handleNoteClick(note)}>
-                  <div className="note-type-badge"><NoteTypeIcon type={note.type} /> {note.type}</div>
-                  <h3>{note.title}</h3>
-                  <p className="note-subject">{note.subject}</p>
-                  <p className="note-desc">{note.description}</p>
-                  {note.tags?.length > 0 && (
-                    <div className="tags-row">{note.tags.slice(0, 3).map(t => <span key={t} className="tag">{t}</span>)}</div>
-                  )}
-                  <div className="note-stats">
-                    <span><FaStar /> {note.avgRating?.toFixed(1)}</span>
-                    <span><FaDownload /> {note.downloads}</span>
-                  </div>
-                  <p className="note-author">By: {note.uploadedBy?.name}</p>
+          {/* Col 3: All Approved Notes */}
+          <div className="panel">
+            <h2><FaFileAlt /> All Notes ({notes.length})</h2>
+            <div className="panel-body">
+              {notes.length === 0 ? <p className="no-data">No approved notes yet.</p> :
+                <div className="notes-grid">
+                  {notes.map(note => (
+                    <div key={note._id} className="note-card" onClick={() => handleNoteClick(note)}>
+                      <div className="note-type-badge"><NoteTypeIcon type={note.type} /> {note.type}</div>
+                      <h3>{note.title}</h3>
+                      <p className="note-subject">{note.subject}</p>
+                      <p className="note-desc">{note.description}</p>
+                      <div className="note-stats">
+                        <span><FaStar /> {note.avgRating?.toFixed(1)}</span>
+                        <span><FaDownload /> {note.downloads}</span>
+                      </div>
+                      <p className="note-author">By: {note.uploadedBy?.name}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              }
             </div>
-          </motion.section>
-        )}
-
-        {/* Edit Modal */}
+          </div>
+        </div>
+      </div>
         {editingNote && (
           <div className="modal-overlay" onClick={() => setEditingNote(null)}>
             <motion.div className="modal-content" onClick={e => e.stopPropagation()} initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
