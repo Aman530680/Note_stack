@@ -172,8 +172,8 @@ const Dashboard = () => {
 
   const getFileUrl = (url) => {
     if (!url) return '';
-    if (!url.startsWith('http')) return `${API_BASE}${url}`;
-    return url;
+    if (url.startsWith('http')) return url;
+    return `https://notestack-api.onrender.com${url}`;
   };
 
   // Render note content based on type
