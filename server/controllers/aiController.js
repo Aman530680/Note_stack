@@ -1,10 +1,10 @@
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const pdfParse = require('pdf-parse');
 const fs = require('fs');
 const path = require('path');
 const { Note } = require('../models');
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Helper: extract text from PDF (supports both URL and local path)
 const extractPdfText = async (fileUrl) => {
@@ -19,14 +19,11 @@ const extractPdfText = async (fileUrl) => {
   return data.text.slice(0, 8000);
 };
 
-// Helper: call OpenAI
+// Helper: call Gemini
 const askAI = async (prompt) => {
-  const res = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    messages: [{ role: 'user', content: prompt }],
-    max_tokens: 500
-  });
-  return res.choices[0].message.content;
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const result = await model.generateContent(prompt);
+  return result.response.text();
 };
 
 // POST /api/ai/summarize/:noteId
