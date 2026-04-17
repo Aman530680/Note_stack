@@ -141,7 +141,7 @@ const Dashboard = () => {
       const res = await summarizeNote(selectedNote._id);
       setSelectedNote({ ...selectedNote, summary: res.data.summary });
       toast.success('Summary generated!');
-    } catch { toast.error('AI summary failed. Check API key.'); }
+    } catch { toast.error('Failed to generate summary. Please try again.'); }
     finally { setAiLoading(''); }
   };
 
@@ -151,7 +151,7 @@ const Dashboard = () => {
       const res = await generateTags(selectedNote._id);
       setSelectedNote({ ...selectedNote, tags: res.data.tags });
       toast.success('Tags generated!');
-    } catch { toast.error('Tag generation failed.'); }
+    } catch { toast.error('Failed to extract tags. Please try again.'); }
     finally { setAiLoading(''); }
   };
 
@@ -161,7 +161,7 @@ const Dashboard = () => {
     try {
       const res = await chatWithNote(selectedNote._id, chatQuestion);
       setChatAnswer(res.data.answer);
-    } catch { toast.error('Chat failed. Check API key.'); }
+    } catch { toast.error('Failed to get answer. Please try again.'); }
     finally { setAiLoading(''); }
   };
 
@@ -184,10 +184,7 @@ const Dashboard = () => {
     );
     // Default: PDF
     return (
-      <>
-        <iframe src={`${API_BASE}${note.fileUrl}#toolbar=0`} title="PDF" width="100%" height="500px" />
-        <div className="preview-notice">🔒 Preview only. Download for full document.</div>
-      </>
+      <iframe src={`${API_BASE}${note.fileUrl}`} title="PDF" width="100%" height="500px" style={{border:'none', borderRadius:'10px'}} />
     );
   };
 

@@ -1,185 +1,34 @@
-.signup-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 100px 20px 20px;
-  position: relative;
-  overflow: hidden;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import './LoginPage.css';
 
-.signup-page::before {
-  content: '';
-  position: absolute;
-  width: 500px;
-  height: 500px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  top: -200px;
-  right: -200px;
-  animation: float 8s ease-in-out infinite;
-}
+.signup-layout { width: min(960px, 95vw); height: min(600px, 92vh); }
 
-.signup-page::after {
-  content: '';
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  bottom: -150px;
-  left: -150px;
-  animation: float 10s ease-in-out infinite reverse;
-}
-
-.signup-container {
-  width: 100%;
-  max-width: 500px;
-  z-index: 1;
-}
-
-.signup-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 3rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.6s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.signup-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.signup-subtitle {
-  text-align: center;
-  color: #666;
-  margin-bottom: 2rem;
-  font-size: 1.1rem;
-}
-
-.signup-form {
+.brand-features {
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
 }
 
-.form-group {
-  position: relative;
-  margin-bottom: 1.5rem;
+.brand-features li {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #333;
-  font-size: 0.95rem;
+.signup-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
 }
 
-.form-input {
-  width: 100%;
-  padding: 1rem 1.5rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: #ffffff !important;
-  color: #000000 !important;
-  font-weight: 500;
-  -webkit-text-fill-color: #000000 !important;
-}
+.field-full { grid-column: span 2; }
 
-.form-input::placeholder {
-  color: #999 !important;
-  -webkit-text-fill-color: #999 !important;
-}
-
-.form-input:-webkit-autofill,
-.form-input:-webkit-autofill:hover,
-.form-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: #000000 !important;
-  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
-  background-color: #ffffff !important;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-  transform: translateY(-2px);
-}
-
-.submit-btn {
-  padding: 1rem;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-}
-
-.submit-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-}
-
-.submit-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.login-link {
-  text-align: center;
-  margin-top: 1.5rem;
-  color: #666;
-}
-
-.login-link a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.login-link a:hover {
-  color: #764ba2;
-  text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-  .signup-card { padding: 1.5rem; }
-  .signup-title { font-size: 1.8rem; }
-  .signup-subtitle { font-size: 0.95rem; }
-  .signup-page { padding: 80px 15px 15px; }
-}
-
-@media (max-width: 480px) {
-  .signup-card { padding: 1.2rem; border-radius: 15px; }
-  .signup-title { font-size: 1.5rem; }
-  .form-input { padding: 0.8rem 1rem; font-size: 0.95rem; }
-  .submit-btn { font-size: 1rem; }
+@media (max-width: 640px) {
+  .signup-form-grid { grid-template-columns: 1fr; }
+  .field-full { grid-column: span 1; }
+  .signup-layout { height: 100vh; border-radius: 0; }
 }

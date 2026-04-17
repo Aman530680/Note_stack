@@ -4,154 +4,91 @@ import { AuthContext } from '../context/AuthContext';
 import { register } from '../services/api';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
 import './SignupPage.css';
 
 const SignupPage = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    contact: '',
-    password: '',
-    confirmPassword: ''
-  });
+  const [formData, setFormData] = useState({ name: '', email: '', contact: '', password: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const set = (field) => (e) => setFormData({ ...formData, [field]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match!');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters!');
-      return;
-    }
-
+    if (formData.password !== formData.confirmPassword) return toast.error('Passwords do not match');
+    if (formData.password.length < 6) return toast.error('Password must be at least 6 characters');
     setLoading(true);
-
     try {
-      const res = await register({
-        name: formData.name,
-        email: formData.email,
-        contact: formData.contact,
-        password: formData.password
-      });
-
+      const res = await register({ name: formData.name, email: formData.email, contact: formData.contact, password: formData.password });
       login(res.data.token, res.data.user);
-      toast.success('Registration successful!');
-      setTimeout(() => navigate('/dashboard'), 1500);
+      toast.success('Account created!');
+      setTimeout(() => navigate('/dashboard'), 800);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Registration failed!');
-    } finally {
-      setLoading(false);
-    }
+      toast.error(error.response?.data?.message || 'Registration failed');
+    } finally { setLoading(false); }
   };
 
   return (
-    <div className="signup-page">
-      <Navbar />
-      <ToastContainer position="top-right" autoClose={3000} />
-      
-      <div className="signup-container">
-        <motion.div
-          className="signup-card"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="signup-title">Create Account</h2>
-          <p className="signup-subtitle">Join NOTESTACK today</p>
-          
-          <form onSubmit={handleSubmit} className="signup-form">
-            <div className="form-group">
-              <label className="form-label">Full Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="Enter your full name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
+    <div className="auth-screen">
+      <ToastContainer position="top-right" autoClose={2000} />
+      <div className="orb orb-1" /><div className="orb orb-2" /><div className="orb orb-3" />
+
+      <div className="auth-layout signup-layout">
+        {/* Brand */}
+        <div className="auth-brand">
+          <div className="brand-logo">NS</div>
+          <h1 className="brand-name">NoteStack</h1>
+          <p className="brand-tagline">Join thousands of students sharing quality academic notes.</p>
+          <ul className="brand-features">
+            <li>✦ Upload PDF, Images & Videos</li>
+            <li>✦ AI-powered summaries</li>
+            <li>✦ Earn contribution points</li>
+            <li>✦ Admin-moderated quality</li>
+          </ul>
+        </div>
+
+        {/* Form */}
+        <motion.div className="auth-card"
+          initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
+
+          <div className="auth-card-header">
+            <h2>Create account</h2>
+            <p>Start sharing notes today</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="auth-form signup-form-grid">
+            <div className="field">
+              <label>Full Name</label>
+              <input type="text" placeholder="Aman Karn" value={formData.name} onChange={set('name')} required />
             </div>
-            
-            <div className="form-group">
-              <label className="form-label">Email Address</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
+            <div className="field">
+              <label>Email</label>
+              <input type="email" placeholder="you@example.com" value={formData.email} onChange={set('email')} required autoComplete="email" />
             </div>
-            
-            <div className="form-group">
-              <label className="form-label">Contact Number</label>
-              <input
-                type="tel"
-                name="contact"
-                placeholder="Enter your contact number"
-                value={formData.contact}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
+            <div className="field">
+              <label>Contact</label>
+              <input type="tel" placeholder="9876543210" value={formData.contact} onChange={set('contact')} required />
             </div>
-            
-            <div className="form-group">
-              <label className="form-label">Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Create a password (min 6 characters)"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
+            <div className="field">
+              <label>Password</label>
+              <input type="password" placeholder="Min 6 characters" value={formData.password} onChange={set('password')} required autoComplete="new-password" />
             </div>
-            
-            <div className="form-group">
-              <label className="form-label">Confirm Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Re-enter your password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
+            <div className="field field-full">
+              <label>Confirm Password</label>
+              <input type="password" placeholder="Re-enter password" value={formData.confirmPassword} onChange={set('confirmPassword')} required autoComplete="new-password" />
             </div>
-            
-            <motion.button
-              type="submit"
-              className="submit-btn"
-              disabled={loading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {loading ? 'Creating Account...' : 'Sign Up'}
+
+            <motion.button type="submit" className="auth-btn field-full" disabled={loading}
+              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+              {loading ? <span className="btn-spinner" /> : 'Create Account'}
             </motion.button>
           </form>
-          
-          <p className="login-link">
-            Already have an account? <Link to="/login">Login here</Link>
-          </p>
+
+          <div className="auth-footer">
+            <p>Already have an account? <Link to="/login">Sign in</Link></p>
+          </div>
         </motion.div>
       </div>
     </div>

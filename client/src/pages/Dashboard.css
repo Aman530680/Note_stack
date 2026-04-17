@@ -583,16 +583,6 @@
   margin-bottom: 1.5rem;
 }
 
-.preview-notice {
-  background: rgba(255, 193, 7, 0.2);
-  border: 2px solid #ffc107;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-top: 1rem;
-  text-align: center;
-  font-weight: 600;
-  color: #ffc107;
-}
 
 .viewer-actions {
   display: flex;
