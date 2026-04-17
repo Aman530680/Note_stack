@@ -6,9 +6,15 @@ const { Note } = require('../models');
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Helper: extract text from PDF
-const extractPdfText = async (filePath) => {
-  const buffer = fs.readFileSync(filePath);
+// Helper: extract text from PDF (supports both URL and local path)
+const extractPdfText = async (fileUrl) => {
+  let buffer;
+  if (fileUrl.startsWith('http')) {
+    const response = await fetch(fileUrl);
+    buffer = Buffer.from(await response.arrayBuffer());
+  } else {
+    buffer = fs.readFileSync(path.join(__dirname, '..', fileUrl));
+  }
   const data = await pdfParse(buffer);
   return data.text.slice(0, 8000);
 };
@@ -32,11 +38,8 @@ exports.summarizeNote = async (req, res) => {
     let text = note.extractedText;
 
     if (!text && note.type === 'pdf' && note.fileUrl) {
-      const filePath = path.join(__dirname, '..', note.fileUrl);
-      if (fs.existsSync(filePath)) {
-        text = await extractPdfText(filePath);
-        note.extractedText = text;
-      }
+      text = await extractPdfText(note.fileUrl);
+      note.extractedText = text;
     }
 
     if (note.type === 'markdown') text = note.markdownContent;
@@ -110,12 +113,9 @@ exports.chatWithNote = async (req, res) => {
     let context = note.extractedText || note.markdownContent;
 
     if (!context && note.type === 'pdf' && note.fileUrl) {
-      const filePath = path.join(__dirname, '..', note.fileUrl);
-      if (fs.existsSync(filePath)) {
-        context = await extractPdfText(filePath);
-        note.extractedText = context;
-        await note.save();
-      }
+      context = await extractPdfText(note.fileUrl);
+      note.extractedText = context;
+      await note.save();
     }
 
     if (!context) return res.status(400).json({ success: false, message: 'No content available for this note' });
