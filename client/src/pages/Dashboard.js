@@ -122,7 +122,11 @@ const Dashboard = () => {
     try {
       await incrementDownload(selectedNote._id);
       const url = selectedNote.fileUrl.startsWith('http') ? selectedNote.fileUrl : `${API_BASE}${selectedNote.fileUrl}`;
-      window.open(url, '_blank');
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.download = `${selectedNote.title}.pdf`;
+      link.click();
       toast.success('Download started!');
     } catch { toast.error('Download failed!'); }
   };
@@ -166,7 +170,15 @@ const Dashboard = () => {
     finally { setAiLoading(''); }
   };
 
-  const getFileUrl = (url) => url?.startsWith('http') ? url : `${API_BASE}${url}`;
+  const getFileUrl = (url) => {
+    if (!url) return '';
+    if (!url.startsWith('http')) return `${API_BASE}${url}`;
+    // Force PDF inline viewing for Cloudinary raw files
+    if (url.includes('cloudinary.com') && url.includes('/raw/')) {
+      return url.replace('/raw/upload/', '/raw/upload/fl_attachment:false/');
+    }
+    return url;
+  };
 
   // Render note content based on type
   const renderNoteContent = (note) => {
