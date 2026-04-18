@@ -68,8 +68,8 @@ const AnalyticsDashboard = () => {
         </div>
 
         <div className="charts-grid">
-          {/* Bar Chart - Top Downloads */}
-          <div className="chart-card wide">
+          {/* Row 1: Bar Chart + Leaderboard */}
+          <div className="chart-card">
             <h2>📥 Most Downloaded Notes</h2>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={topDownloads} margin={{ top: 10, right: 20, left: 0, bottom: 50 }}>
@@ -82,36 +82,7 @@ const AnalyticsDashboard = () => {
             </ResponsiveContainer>
           </div>
 
-          {/* Pie Chart - Subject Stats */}
           <div className="chart-card">
-            <h2>📚 Subject-wise Usage</h2>
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie data={subjectStats} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
-                  {subjectStats.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                </Pie>
-                <Tooltip contentStyle={{ background: '#1a1a2e', border: '1px solid #667eea', color: '#fff' }} />
-                <Legend wrapperStyle={{ color: '#ccc', fontSize: '0.8rem' }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Line Chart - Weekly Uploads */}
-          <div className="chart-card">
-            <h2>📈 Weekly Upload Trend</h2>
-            <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={weeklyUploads}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                <XAxis dataKey="date" tick={{ fill: '#ccc', fontSize: 11 }} />
-                <YAxis tick={{ fill: '#ccc' }} allowDecimals={false} />
-                <Tooltip contentStyle={{ background: '#1a1a2e', border: '1px solid #667eea', color: '#fff' }} />
-                <Line type="monotone" dataKey="count" stroke="#667eea" strokeWidth={3} dot={{ fill: '#764ba2', r: 4 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Leaderboard */}
-          <div className="chart-card wide">
             <h2>🏆 Top Contributors Leaderboard</h2>
             <div className="leaderboard-table-wrapper">
               <table className="leaderboard-table">
@@ -137,6 +108,33 @@ const AnalyticsDashboard = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Row 2: Pie Chart + Line Chart */}
+          <div className="chart-card">
+            <h2>📚 Subject-wise Usage</h2>
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie data={subjectStats} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                  {subjectStats.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                </Pie>
+                <Tooltip contentStyle={{ background: '#1a1a2e', border: '1px solid #667eea', color: '#fff' }} />
+                <Legend wrapperStyle={{ color: '#ccc', fontSize: '0.8rem' }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="chart-card">
+            <h2>📈 Weekly Upload Trend</h2>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={weeklyUploads}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                <XAxis dataKey="date" tick={{ fill: '#ccc', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#ccc' }} allowDecimals={false} />
+                <Tooltip contentStyle={{ background: '#1a1a2e', border: '1px solid #667eea', color: '#fff' }} />
+                <Line type="monotone" dataKey="count" stroke="#667eea" strokeWidth={3} dot={{ fill: '#764ba2', r: 4 }} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>

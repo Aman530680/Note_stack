@@ -43,11 +43,7 @@ const LoginPage = () => {
           <div className="brand-logo">NS</div>
           <h1 className="brand-name">NoteStack</h1>
           <p className="brand-tagline">The smartest way to share and discover academic notes.</p>
-          <div className="brand-stats">
-            <div className="bstat"><span>500+</span><p>Notes</p></div>
-            <div className="bstat"><span>1K+</span><p>Students</p></div>
-            <div className="bstat"><span>5K+</span><p>Downloads</p></div>
-          </div>
+          <div className="brand-stats"></div>
         </div>
 
         {/* Right panel */}
