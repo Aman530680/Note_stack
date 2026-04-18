@@ -290,9 +290,34 @@
   .admin-middle-row { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 600px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .admin-container { padding: 0.8rem; }
-  .notes-table { font-size: 0.75rem; }
-  .notes-table th, .notes-table td { padding: 0.5rem; }
+@media (max-width: 768px) {
+  .admin-dashboard-page { padding-top: 60px; }
+  .admin-container { padding: 0.7rem; gap: 0.7rem; }
+  .admin-header h1 { font-size: 1.5rem; }
+  .admin-header p { font-size: 0.82rem; }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+  .stat-box { padding: 0.8rem; gap: 0.7rem; }
+  .stat-box h3 { font-size: 1.4rem; }
+  .stat-box p { font-size: 0.75rem; }
+  .stat-icon { font-size: 1.5rem; }
+
+  .notes-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .notes-table { font-size: 0.75rem; min-width: 550px; }
+  .notes-table th, .notes-table td { padding: 0.5rem 0.6rem; }
+
+  .comments-grid { grid-template-columns: 1fr; }
+  .section-header h2 { font-size: 1rem; }
+  .notifications-list { max-height: 180px; }
+  .notif-content p { font-size: 0.82rem; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  .stat-box { padding: 0.7rem; flex-direction: column; text-align: center; gap: 0.3rem; }
+  .stat-box h3 { font-size: 1.3rem; }
+  .admin-container { padding: 0.5rem; }
+  .action-btn { min-width: 26px; padding: 0.3rem; font-size: 0.85rem; }
+  .mark-seen-btn { padding: 0.3rem 0.7rem; font-size: 0.75rem; }
+  .approve-comment-btn { font-size: 0.78rem; padding: 0.5rem; }
 }

@@ -150,7 +150,27 @@
 
 /* Responsive */
 @media (max-width: 640px) {
-  .auth-layout { grid-template-columns: 1fr; height: 100vh; border-radius: 0; }
+  .auth-layout {
+    grid-template-columns: 1fr;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    width: 100vw;
+  }
   .auth-brand { display: none; }
-  .auth-card { padding: 2rem 1.5rem; justify-content: center; }
+  .auth-card {
+    padding: 2rem 1.2rem;
+    justify-content: center;
+    height: 100%;
+  }
+  .auth-card-header h2 { font-size: 1.4rem; }
+  .field input { font-size: 16px; } /* prevent zoom on iOS */
+  .auth-btn { padding: 0.85rem; font-size: 0.95rem; }
+}
+
+@media (max-width: 380px) {
+  .auth-card { padding: 1.5rem 1rem; }
+  .auth-card-header h2 { font-size: 1.2rem; }
+  .field label { font-size: 0.75rem; }
+  .field input { padding: 0.6rem 0.8rem; font-size: 15px; }
 }

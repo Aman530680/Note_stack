@@ -820,60 +820,83 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  /* Navbar */
-  .navbar-container { padding: 0.8rem 1rem; }
-  .navbar-logo { font-size: 1.4rem; }
-  .navbar-menu { gap: 0.6rem; }
-  .navbar-menu li a { font-size: 0.8rem; }
-  .nav-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+  .navbar-container { padding: 0.7rem 1rem; }
+  .navbar-logo { font-size: 1.3rem; }
+  .navbar-menu { gap: 0.5rem; }
+  .navbar-menu li a { font-size: 0.78rem; }
+  .nav-btn { padding: 0.35rem 0.7rem; font-size: 0.78rem; }
 
-  /* Hero */
-  .hero-title { font-size: 2.5rem; letter-spacing: 3px; }
-  .hero-tagline { font-size: 1.1rem; }
-  .hero-subtitle { font-size: 0.95rem; }
-  .explore-btn { padding: 0.9rem 1.8rem; font-size: 1rem; }
+  .hero-title { font-size: 2.2rem; letter-spacing: 2px; }
+  .hero-tagline { font-size: 1rem; }
+  .hero-subtitle { font-size: 0.9rem; margin-bottom: 2rem; }
+  .explore-btn { padding: 0.8rem 1.6rem; font-size: 0.95rem; }
   .float-element { display: none; }
 
-  /* Sections */
   .about-section, .features-section, .contact-section,
   .how-section, .testimonials-section, .faq-section, .cta-section {
-    padding: 70px 15px 40px;
+    padding: 70px 12px 40px;
   }
-  .section-header h2 { font-size: 2rem; }
-  .section-header p { font-size: 1rem; }
-  .section-header { margin-bottom: 2rem; }
+  .section-header h2 { font-size: 1.8rem; }
+  .section-header p { font-size: 0.95rem; }
+  .section-header { margin-bottom: 1.5rem; }
 
-  /* Grids → single column */
   .about-grid, .features-grid, .steps-grid,
-  .testimonials-grid, .faq-grid { grid-template-columns: 1fr; }
-
-  /* Stats */
-  .stats-section { padding: 40px 15px; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-  .stat-card { padding: 1.2rem; }
-  .stat-card h3 { font-size: 2rem; }
-  .stat-icon { font-size: 2rem; }
-
-  /* FAQ */
+  .testimonials-grid { grid-template-columns: 1fr; }
   .faq-grid { grid-template-columns: 1fr; }
+
+  .stats-section { padding: 35px 12px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+  .stat-card { padding: 1rem; }
+  .stat-card h3 { font-size: 1.8rem; }
+  .stat-icon { font-size: 1.8rem; }
+
   .faq-card:hover { transform: none; }
-
-  /* CTA */
-  .cta-content h2 { font-size: 2rem; }
-  .cta-content p { font-size: 1rem; margin-bottom: 2rem; }
-  .cta-buttons { flex-direction: column; align-items: center; }
-  .cta-btn { width: 100%; max-width: 280px; text-align: center; }
-
-  /* Contact */
-  .contact-card { padding: 1.5rem; }
-  .profile-section h3 { font-size: 1.8rem; }
   .detail-item:hover { transform: none; }
+  .about-card:hover { transform: none; }
+
+  .cta-content h2 { font-size: 1.8rem; }
+  .cta-content p { font-size: 0.95rem; margin-bottom: 1.5rem; }
+  .cta-buttons { flex-direction: column; align-items: center; }
+  .cta-btn { width: 100%; max-width: 260px; text-align: center; padding: 0.85rem 1.5rem; font-size: 1rem; }
+
+  .contact-card { padding: 1.2rem; }
+  .profile-section h3 { font-size: 1.6rem; }
+  .profile-icon { width: 90px; height: 90px; font-size: 3rem; }
+  .detail-item { padding: 1rem; gap: 1rem; }
+  .tech-badges { gap: 0.5rem; }
+  .tech-badge { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+
+  .about-card { padding: 1.5rem; }
+  .feature-card { padding: 1.5rem; }
+  .step-card { padding: 1.5rem; }
+  .testimonial-card { padding: 1.5rem; }
+  .faq-card { padding: 1.2rem; }
 }
 
 @media (max-width: 480px) {
-  .hero-title { font-size: 1.8rem; letter-spacing: 2px; }
-  .hero-tagline { font-size: 0.95rem; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .navbar-menu { gap: 0.4rem; }
-  .nav-btn { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+  .navbar-menu { gap: 0.3rem; }
+  .navbar-menu li a { font-size: 0.72rem; }
+  .nav-btn { padding: 0.3rem 0.55rem; font-size: 0.72rem; }
+  .navbar-logo { font-size: 1.1rem; }
+
+  .hero-title { font-size: 1.6rem; letter-spacing: 1px; }
+  .hero-tagline { font-size: 0.88rem; }
+  .hero-subtitle { font-size: 0.82rem; }
+  .explore-btn { padding: 0.7rem 1.4rem; font-size: 0.88rem; }
+
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .stat-card h3 { font-size: 1.5rem; }
+  .stat-card p { font-size: 0.8rem; }
+
+  .section-header h2 { font-size: 1.5rem; }
+  .section-header p { font-size: 0.85rem; }
+
+  .about-card h3 { font-size: 1.3rem; }
+  .about-card p { font-size: 0.9rem; }
+  .feature-card h3 { font-size: 1.2rem; }
+  .feature-card p { font-size: 0.88rem; }
+  .step-card h3 { font-size: 1.2rem; }
+  .step-card p { font-size: 0.88rem; }
+
+  .footer { font-size: 0.82rem; padding: 1.2rem; }
 }

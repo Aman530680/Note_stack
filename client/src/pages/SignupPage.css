@@ -30,5 +30,15 @@
 @media (max-width: 640px) {
   .signup-form-grid { grid-template-columns: 1fr; }
   .field-full { grid-column: span 1; }
-  .signup-layout { height: 100vh; border-radius: 0; }
+  .signup-layout {
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    width: 100vw;
+  }
+  .auth-card { overflow-y: auto; }
+}
+
+@media (max-width: 380px) {
+  .auth-card { padding: 1.5rem 1rem; gap: 1rem; }
 }

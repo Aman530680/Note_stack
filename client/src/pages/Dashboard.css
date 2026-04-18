@@ -525,13 +525,49 @@
 .markdown-viewer code { background: rgba(102,126,234,0.2); padding: 0.1rem 0.3rem; border-radius: 3px; }
 
 @media (max-width: 1024px) {
-  .main-grid { grid-template-columns: 1fr 1fr; }
+  .notes-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 700px) {
-  .dashboard-page { height: auto; overflow: auto; }
-  .main-grid { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+  .dashboard-page { height: auto; min-height: 100vh; overflow: auto; }
+  .dashboard-container { margin-top: 56px; padding: 0.5rem; gap: 0.5rem; overflow: visible; }
+
+  .top-bar { flex-wrap: wrap; gap: 0.5rem; }
+  .top-bar h1 { font-size: 1rem; width: 100%; }
+  .tab-btns { width: 100%; }
+  .tab-btn { flex: 1; justify-content: center; font-size: 0.78rem; padding: 0.4rem 0.5rem; }
+  .quick-search-form { width: 100%; order: 3; }
+  .user-pills { width: 100%; justify-content: flex-start; }
+
+  .tab-content { overflow: visible; }
+  .upload-tab-grid { grid-template-columns: 1fr; height: auto; overflow: visible; }
+  .panel { overflow: visible; }
+  .panel-body { max-height: 300px; overflow-y: auto; }
+
+  .notes-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  .note-card { padding: 0.6rem; }
+  .note-card h3 { font-size: 0.8rem; }
+
+  .viewer-content { width: 96%; padding: 0.9rem; max-height: 92vh; }
+  .viewer-header h2 { font-size: 0.9rem; }
+
+  .modal-content { width: 94%; padding: 1.2rem; }
+
+  .type-selector { flex-wrap: wrap; }
+  .type-btn { min-width: calc(50% - 0.15rem); }
+
+  .ai-section { padding: 0.8rem; }
+  .rec-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
   .notes-grid { grid-template-columns: 1fr; }
-  .top-bar { flex-wrap: wrap; }
-  .user-pills { flex-wrap: wrap; }
+  .top-bar h1 { font-size: 0.95rem; }
+  .tab-btn { font-size: 0.75rem; padding: 0.35rem 0.4rem; }
+  .quick-search-input { font-size: 16px; } /* prevent iOS zoom */
+  .form-input, .form-textarea { font-size: 16px; } /* prevent iOS zoom */
+  .viewer-content { width: 100%; border-radius: 12px 12px 0 0; max-height: 95vh; }
+  .rec-grid { grid-template-columns: 1fr; }
+  .star { font-size: 1.5rem; }
+  .chat-input { font-size: 16px; }
 }
