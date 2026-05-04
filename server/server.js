@@ -9,8 +9,9 @@ const socketio = require('socket.io');
 
 dotenv.config();
 
-const connectDB = require('./config/db');
-connectDB();
+const { connectDB, sequelize } = require('./config/db');
+// Import models to register associations before sync
+require('./models');
 
 const app = express();
 const server = http.createServer(app);
@@ -54,4 +55,12 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+const start = async () => {
+  await connectDB();
+  await sequelize.sync({ alter: true });
+  console.log('✅ Database synced');
+  server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+};
+
+start();

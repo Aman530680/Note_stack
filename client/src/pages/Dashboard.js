@@ -3,11 +3,10 @@ import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ReactMarkdown from 'react-markdown';
 import {
   FaUpload, FaSearch, FaDownload, FaStar,
   FaTrophy, FaFileAlt, FaCheckCircle, FaEdit, FaTrash, FaList,
-  FaRobot, FaTags, FaYoutube, FaImage, FaMarkdown, FaFilePdf
+  FaRobot, FaTags, FaYoutube, FaFilePdf
 } from 'react-icons/fa';
 import {
   uploadNote, getNotes, searchNotes, incrementDownload,
@@ -25,7 +24,7 @@ const getYouTubeId = (url) => {
 };
 
 const NoteTypeIcon = ({ type }) => {
-  const icons = { pdf: <FaFilePdf />, image: <FaImage />, video: <FaYoutube />, markdown: <FaMarkdown /> };
+  const icons = { pdf: <FaFilePdf />, video: <FaYoutube /> };
   return icons[type] || <FaFileAlt />;
 };
 
@@ -33,7 +32,7 @@ const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const [file, setFile] = useState(null);
   const [noteType, setNoteType] = useState('pdf');
-  const [uploadData, setUploadData] = useState({ title: '', subject: '', description: '', videoUrl: '', markdownContent: '' });
+  const [uploadData, setUploadData] = useState({ title: '', subject: '', description: '', videoUrl: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [notes, setNotes] = useState([]);
   const [myNotes, setMyNotes] = useState([]);
@@ -62,14 +61,13 @@ const Dashboard = () => {
   const handleFileChange = (e) => {
     const f = e.target.files[0];
     if (!f) return;
-    const validTypes = noteType === 'pdf' ? ['application/pdf'] : ['image/jpeg', 'image/png', 'image/jpg'];
-    if (validTypes.includes(f.type)) { setFile(f); toast.success('File selected!'); }
-    else { toast.error(`Invalid file type for ${noteType}`); setFile(null); }
+    if (f.type === 'application/pdf') { setFile(f); toast.success('File selected!'); }
+    else { toast.error('Only PDF files allowed'); setFile(null); }
   };
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if ((noteType === 'pdf' || noteType === 'image') && !file)
+    if (noteType === 'pdf' && !file)
       return toast.error('Please select a file!');
 
     setUploading(true);
@@ -80,13 +78,12 @@ const Dashboard = () => {
     formData.append('type', noteType);
     if (file) formData.append('file', file);
     if (noteType === 'video') formData.append('videoUrl', uploadData.videoUrl);
-    if (noteType === 'markdown') formData.append('markdownContent', uploadData.markdownContent);
 
     try {
       await uploadNote(formData);
       toast.success('Note uploaded! Waiting for admin approval.');
       setFile(null);
-      setUploadData({ title: '', subject: '', description: '', videoUrl: '', markdownContent: '' });
+      setUploadData({ title: '', subject: '', description: '', videoUrl: '' });
       fetchMyNotes();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Upload failed!');
@@ -176,11 +173,7 @@ const Dashboard = () => {
     return `https://notestack-api.onrender.com${url}`;
   };
 
-  // Render note content based on type
   const renderNoteContent = (note) => {
-    if (note.type === 'image') return (
-      <img src={getFileUrl(note.fileUrl)} alt={note.title} className="note-image-viewer" />
-    );
     if (note.type === 'video') {
       const videoId = getYouTubeId(note.videoUrl);
       return videoId ? (
@@ -188,11 +181,6 @@ const Dashboard = () => {
           title={note.title} allowFullScreen />
       ) : <p style={{ color: '#fff' }}>Invalid YouTube URL</p>;
     }
-    if (note.type === 'markdown') return (
-      <div className="markdown-viewer">
-        <ReactMarkdown>{note.markdownContent}</ReactMarkdown>
-      </div>
-    );
     return (
       <iframe src={getFileUrl(note.fileUrl)} title="PDF" width="100%" height="500px" style={{border:'none', borderRadius:'10px'}} />
     );
@@ -258,7 +246,7 @@ const Dashboard = () => {
               <div className="panel">
                 <h2><FaUpload /> Upload Note</h2>
                 <div className="type-selector">
-                  {['pdf', 'image', 'video', 'markdown'].map(t => (
+                  {['pdf', 'video'].map(t => (
                     <button key={t} type="button" className={`type-btn ${noteType === t ? 'active' : ''}`}
                       onClick={() => { setNoteType(t); setFile(null); }}>
                       <NoteTypeIcon type={t} /> {t.toUpperCase()}
@@ -272,22 +260,18 @@ const Dashboard = () => {
                     onChange={e => setUploadData({ ...uploadData, subject: e.target.value })} required className="form-input" />
                   <textarea placeholder="Description" value={uploadData.description}
                     onChange={e => setUploadData({ ...uploadData, description: e.target.value })} required className="form-textarea" rows="3" />
-                  {(noteType === 'pdf' || noteType === 'image') && (
+                  {noteType === 'pdf' && (
                     <div className="file-upload-wrapper">
-                      <input type="file" id="file-input" accept={noteType === 'pdf' ? '.pdf' : '.jpg,.jpeg,.png'}
+                      <input type="file" id="file-input" accept=".pdf"
                         onChange={handleFileChange} className="file-input" />
                       <label htmlFor="file-input" className="file-label">
-                        <NoteTypeIcon type={noteType} /> {file ? file.name : `Choose ${noteType.toUpperCase()}`}
+                        <FaFilePdf /> {file ? file.name : 'Choose PDF'}
                       </label>
                     </div>
                   )}
                   {noteType === 'video' && (
                     <input type="url" placeholder="YouTube URL" value={uploadData.videoUrl}
                       onChange={e => setUploadData({ ...uploadData, videoUrl: e.target.value })} required className="form-input" />
-                  )}
-                  {noteType === 'markdown' && (
-                    <textarea placeholder="Markdown content..." value={uploadData.markdownContent}
-                      onChange={e => setUploadData({ ...uploadData, markdownContent: e.target.value })} required className="form-textarea" rows="6" />
                   )}
                   <button type="submit" className="upload-btn" disabled={uploading}>
                     {uploading ? 'Uploading...' : 'Upload Note'}
@@ -349,7 +333,7 @@ const Dashboard = () => {
               <button onClick={() => setSelectedNote(null)} className="close-btn">✕</button>
             </div>
             <div className="pdf-viewer">{renderNoteContent(selectedNote)}</div>
-            {(selectedNote.type === 'pdf' || selectedNote.type === 'image') && (
+            {selectedNote.type === 'pdf' && (
               <div className="viewer-actions">
                 <button onClick={handleDownload} className="download-btn"><FaDownload /> Download</button>
               </div>
@@ -370,7 +354,7 @@ const Dashboard = () => {
                   <div className="tags-row">{selectedNote.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
                 )}
               </div>
-              {(selectedNote.type === 'pdf' || selectedNote.type === 'markdown') && (
+              {selectedNote.type === 'pdf' && (
                 <div className="ai-feature">
                   <h4>💬 Ask a Question</h4>
                   <div className="chat-input-row">

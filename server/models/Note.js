@@ -1,40 +1,21 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
 
-const noteSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  subject: { type: String, required: true },
-  description: { type: String, required: true },
+const Note = sequelize.define('Note', {
+  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  title: { type: DataTypes.STRING, allowNull: false },
+  subject: { type: DataTypes.STRING, allowNull: false },
+  description: { type: DataTypes.TEXT, allowNull: false },
+  type: { type: DataTypes.ENUM('pdf', 'video'), defaultValue: 'pdf' },
+  fileUrl: { type: DataTypes.STRING, defaultValue: '' },
+  videoUrl: { type: DataTypes.STRING, defaultValue: '' },
+  summary: { type: DataTypes.TEXT, defaultValue: '' },
+  tags: { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: [] },
+  extractedText: { type: DataTypes.TEXT, defaultValue: '' },
+  status: { type: DataTypes.ENUM('Pending', 'Approved', 'Rejected'), defaultValue: 'Pending' },
+  downloads: { type: DataTypes.INTEGER, defaultValue: 0 },
+  avgRating: { type: DataTypes.FLOAT, defaultValue: 0 },
+  rankScore: { type: DataTypes.FLOAT, defaultValue: 0 },
+}, { tableName: 'notes' });
 
-  // Content type: pdf | image | video | markdown
-  type: { type: String, enum: ['pdf', 'image', 'video', 'markdown'], default: 'pdf' },
-
-  // File URL for pdf/image
-  fileUrl: { type: String, default: '' },
-
-  // YouTube video URL for video type
-  videoUrl: { type: String, default: '' },
-
-  // Raw markdown content for markdown type
-  markdownContent: { type: String, default: '' },
-
-  // AI-generated summary
-  summary: { type: String, default: '' },
-
-  // AI-extracted tags/keywords
-  tags: [{ type: String }],
-
-  // Extracted text from PDF (used for AI chat)
-  extractedText: { type: String, default: '' },
-
-  uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
-  downloads: { type: Number, default: 0 },
-  avgRating: { type: Number, default: 0 },
-  rankScore: { type: Number, default: 0 }
-}, { timestamps: true });
-
-// Index for tag-based search
-noteSchema.index({ tags: 1 });
-noteSchema.index({ subject: 1 });
-
-module.exports = mongoose.model('Note', noteSchema);
+module.exports = Note;

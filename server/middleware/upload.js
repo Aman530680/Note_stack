@@ -19,8 +19,7 @@ const storage = new CloudinaryStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
-  allowed.includes(file.mimetype) ? cb(null, true) : cb(new Error('Only PDF and image files allowed'), false);
+  file.mimetype === 'application/pdf' ? cb(null, true) : cb(new Error('Only PDF files allowed'), false);
 };
 
 module.exports = multer({ storage, fileFilter, limits: { fileSize: 15 * 1024 * 1024 } });

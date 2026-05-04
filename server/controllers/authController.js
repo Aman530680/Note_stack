@@ -7,14 +7,14 @@ const generateToken = (id) =>
 exports.register = async (req, res) => {
   try {
     const { name, email, contact, password } = req.body;
-    const existing = await User.findOne({ email });
+    const existing = await User.findOne({ where: { email } });
     if (existing) return res.status(400).json({ success: false, message: 'User already exists' });
 
     const user = await User.create({ name, email, contact, password, role: 'student' });
     res.status(201).json({
       success: true,
-      token: generateToken(user._id),
-      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+      token: generateToken(user.id),
+      user: { id: user.id, name: user.name, email: user.email, role: user.role }
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -27,7 +27,7 @@ exports.login = async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ success: false, message: 'Please provide email and password' });
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email } });
     if (!user) return res.status(401).json({ success: false, message: 'Invalid credentials' });
 
     const isMatch = await user.matchPassword(password);
@@ -35,8 +35,8 @@ exports.login = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      token: generateToken(user._id),
-      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+      token: generateToken(user.id),
+      user: { id: user.id, name: user.name, email: user.email, role: user.role }
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -45,7 +45,7 @@ exports.login = async (req, res) => {
 
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findByPk(req.user.id, { attributes: { exclude: ['password'] } });
     res.status(200).json({ success: true, data: user });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
