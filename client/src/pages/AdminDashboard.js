@@ -69,7 +69,8 @@ const AdminDashboard = () => {
       toast.success('Note approved successfully!');
       fetchData();
     } catch (error) {
-      toast.error('Failed to approve note!');
+      toast.error(error.response?.data?.message || 'Failed to approve note!');
+      console.error('Approve error:', error.response?.data || error.message);
     }
   };
 
@@ -79,7 +80,8 @@ const AdminDashboard = () => {
       toast.success('Note rejected!');
       fetchData();
     } catch (error) {
-      toast.error('Failed to reject note!');
+      toast.error(error.response?.data?.message || 'Failed to reject note!');
+      console.error('Reject error:', error.response?.data || error.message);
     }
   };
 
@@ -217,7 +219,7 @@ const AdminDashboard = () => {
             ) : (
               notifications.slice(0, 5).map((notif) => (
                 <div 
-                  key={notif._id} 
+                  key={notif.id} 
                   className={`notification-item ${!notif.seen ? 'unseen' : ''}`}
                 >
                   <div className="notif-content">
@@ -245,7 +247,7 @@ const AdminDashboard = () => {
           ) : (
             <div className="comments-grid">
               {comments.filter(c => !c.commentApproved).map((comment) => (
-                <div key={comment._id} className="comment-card">
+                <div key={comment.id} className="comment-card">
                   <div className="comment-header">
                     <strong>{comment.userId?.name}</strong>
                     <span className="comment-rating">{'⭐'.repeat(comment.rating)}</span>
@@ -253,7 +255,7 @@ const AdminDashboard = () => {
                   <p className="comment-note">On: {comment.noteId?.title}</p>
                   <p className="comment-text">"{comment.comment}"</p>
                   <button 
-                    onClick={() => handleApproveComment(comment._id)}
+                    onClick={() => handleApproveComment(comment.id)}
                     className="approve-comment-btn"
                   >
                     ✓ Approve & Award 1 Coin
@@ -294,13 +296,13 @@ const AdminDashboard = () => {
                   </tr>
                 ) : (
                   notes.map((note) => (
-                    <tr key={note._id}>
+                    <tr key={note.id}>
                       <td>{note.title}</td>
                       <td>{note.subject}</td>
                       <td>
-                        {note.uploadedBy?.name}
+                        {note.uploader?.name}
                         <br />
-                        <small>{note.uploadedBy?.email}</small>
+                        <small>{note.uploader?.email}</small>
                       </td>
                       <td>
                         <span className={`status-badge ${note.status.toLowerCase()}`}>
@@ -308,20 +310,20 @@ const AdminDashboard = () => {
                         </span>
                       </td>
                       <td>{note.downloads}</td>
-                      <td>{note.avgRating.toFixed(1)} ⭐</td>
+                      <td>{note.avgRating?.toFixed(1)} ⭐</td>
                       <td>
                         <div className="action-buttons">
                           {note.status === 'Pending' && (
                             <>
                               <button
-                                onClick={() => handleApprove(note._id)}
+                                onClick={() => handleApprove(note.id)}
                                 className="action-btn approve"
                                 title="Approve"
                               >
                                 <FaCheckCircle />
                               </button>
                               <button
-                                onClick={() => handleReject(note._id)}
+                                onClick={() => handleReject(note.id)}
                                 className="action-btn reject"
                                 title="Reject"
                               >
@@ -330,14 +332,14 @@ const AdminDashboard = () => {
                             </>
                           )}
                           <button
-                            onClick={() => handleDelete(note._id)}
+                            onClick={() => handleDelete(note.id)}
                             className="action-btn delete"
                             title="Delete"
                           >
                             <FaTrash />
                           </button>
                           <a
-                            href={`${process.env.REACT_APP_API_URL?.replace('/api', '') || 'https://notestack-api.onrender.com'}${note.fileUrl}`}
+                            href={note.fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="action-btn view"

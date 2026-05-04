@@ -48,6 +48,7 @@ app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 
 app.get('/', (req, res) => res.json({ message: 'NOTESTACK API running' }));
+app.get('/api', (req, res) => res.json({ message: 'NOTESTACK API running' }));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

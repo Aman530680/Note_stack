@@ -17,20 +17,20 @@ const {
 const { protect, adminOnly } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
-// Public/Student routes
+// Static routes first
 router.post('/upload', protect, upload.single('file'), uploadNote);
 router.get('/', protect, getNotes);
 router.get('/search', protect, searchNotes);
 router.get('/trending', protect, getTrendingNotes);
 router.get('/my/all', protect, getMyNotes);
-router.get('/:id', getNote); // Public - anyone can view
-router.put('/:id/download', protect, incrementDownload);
-router.put('/:id', protect, updateNote);
+router.get('/admin/all', protect, adminOnly, getAllNotes);
 router.delete('/my/:id', protect, deleteOwnNote);
 
-// Admin routes
-router.get('/admin/all', protect, adminOnly, getAllNotes);
+// Dynamic routes after
+router.get('/:id', getNote);
+router.put('/:id/download', protect, incrementDownload);
 router.put('/:id/approve', protect, adminOnly, approveNote);
+router.put('/:id', protect, updateNote);
 router.delete('/:id', protect, adminOnly, deleteNote);
 
 module.exports = router;

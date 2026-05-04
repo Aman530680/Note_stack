@@ -105,8 +105,8 @@ const Dashboard = () => {
     setRating(0); setComment(''); setChatAnswer(''); setChatQuestion(''); setRecommendations([]);
     try {
       const [ratingRes, recRes] = await Promise.all([
-        checkUserRating(note._id),
-        recommendNotes(note._id)
+        checkUserRating(note.id),
+        recommendNotes(note.id)
       ]);
       setHasRated(ratingRes.data.hasRated);
       if (ratingRes.data.hasRated) { setRating(ratingRes.data.data.rating); setComment(ratingRes.data.data.comment || ''); }
@@ -117,7 +117,7 @@ const Dashboard = () => {
   const handleDownload = async () => {
     if (!selectedNote) return;
     try {
-      await incrementDownload(selectedNote._id);
+      await incrementDownload(selectedNote.id);
       const url = selectedNote.fileUrl.startsWith('http') ? selectedNote.fileUrl : `${API_BASE}${selectedNote.fileUrl}`;
       const link = document.createElement('a');
       link.href = url;
@@ -131,7 +131,7 @@ const Dashboard = () => {
   const handleRatingSubmit = async () => {
     if (rating === 0) return toast.error('Please select a rating!');
     try {
-      await submitRating({ noteId: selectedNote._id, rating, comment });
+      await submitRating({ noteId: selectedNote.id, rating, comment });
       toast.success('Rating submitted!');
       setHasRated(true);
     } catch (error) { toast.error(error.response?.data?.message || 'Rating failed!'); }
@@ -140,7 +140,7 @@ const Dashboard = () => {
   const handleSummarize = async () => {
     setAiLoading('summary');
     try {
-      const res = await summarizeNote(selectedNote._id);
+      const res = await summarizeNote(selectedNote.id);
       setSelectedNote({ ...selectedNote, summary: res.data.summary });
       toast.success('Summary generated!');
     } catch { toast.error('Failed to generate summary. Please try again.'); }
@@ -150,7 +150,7 @@ const Dashboard = () => {
   const handleGenerateTags = async () => {
     setAiLoading('tags');
     try {
-      const res = await generateTags(selectedNote._id);
+      const res = await generateTags(selectedNote.id);
       setSelectedNote({ ...selectedNote, tags: res.data.tags });
       toast.success('Tags generated!');
     } catch { toast.error('Failed to extract tags. Please try again.'); }
@@ -161,7 +161,7 @@ const Dashboard = () => {
     if (!chatQuestion.trim()) return toast.error('Enter a question!');
     setAiLoading('chat');
     try {
-      const res = await chatWithNote(selectedNote._id, chatQuestion);
+      const res = await chatWithNote(selectedNote.id, chatQuestion);
       setChatAnswer(res.data.answer);
     } catch { toast.error('Failed to get answer. Please try again.'); }
     finally { setAiLoading(''); }
@@ -221,7 +221,7 @@ const Dashboard = () => {
                 {notes.length === 0 ? <p className="no-data">No approved notes yet.</p> :
                   <div className="notes-grid">
                     {notes.map(note => (
-                      <div key={note._id} className="note-card" onClick={() => handleNoteClick(note)}>
+                      <div key={note.id} className="note-card" onClick={() => handleNoteClick(note)}>
                         <div className="note-type-badge"><NoteTypeIcon type={note.type} /> {note.type}</div>
                         <h3>{note.title}</h3>
                         <p className="note-subject">{note.subject}</p>
@@ -230,7 +230,7 @@ const Dashboard = () => {
                           <span><FaStar /> {note.avgRating?.toFixed(1)}</span>
                           <span><FaDownload /> {note.downloads}</span>
                         </div>
-                        <p className="note-author">By: {note.uploadedBy?.name}</p>
+                        <p className="note-author">By: {note.uploader?.name}</p>
                       </div>
                     ))}
                   </div>
@@ -285,15 +285,15 @@ const Dashboard = () => {
                 <div className="panel-body">
                   {myNotes.length === 0 ? <p className="no-data">No notes uploaded yet.</p> :
                     myNotes.map(note => (
-                      <div key={note._id} className="my-note-item">
+                      <div key={note.id} className="my-note-item">
                         <div className="note-info">
                           <h4><NoteTypeIcon type={note.type} /> {note.title}</h4>
                           <p><strong>Subject:</strong> {note.subject}</p>
                           <span className={`status-badge ${note.status.toLowerCase()}`}>{note.status}</span>
                         </div>
                         <div className="note-actions">
-                          <button onClick={() => setEditingNote({ id: note._id, title: note.title, subject: note.subject, description: note.description })} className="edit-btn"><FaEdit /> Edit</button>
-                          <button onClick={async () => { if (window.confirm('Delete?')) { await deleteOwnNote(note._id); toast.success('Deleted!'); fetchMyNotes(); } }} className="delete-btn"><FaTrash /> Delete</button>
+                          <button onClick={() => setEditingNote({ id: note.id, title: note.title, subject: note.subject, description: note.description })} className="edit-btn"><FaEdit /> Edit</button>
+                          <button onClick={async () => { if (window.confirm('Delete?')) { await deleteOwnNote(note.id); toast.success('Deleted!'); fetchMyNotes(); } }} className="delete-btn"><FaTrash /> Delete</button>
                         </div>
                       </div>
                     ))
@@ -373,7 +373,7 @@ const Dashboard = () => {
                 <h3>🔗 Recommended Notes</h3>
                 <div className="rec-grid">
                   {recommendations.map(r => (
-                    <div key={r._id} className="rec-card" onClick={() => handleNoteClick(r)}>
+                    <div key={r.id} className="rec-card" onClick={() => handleNoteClick(r)}>
                       <h4>{r.title}</h4>
                       <p>{r.subject}</p>
                       <span><FaStar /> {r.avgRating?.toFixed(1)}</span>
