@@ -59,9 +59,26 @@ const PORT = process.env.PORT || 5000;
 
 const start = async () => {
   await connectDB();
-  await sequelize.sync({ alter: true });
-  console.log('✅ Database synced');
+  try {
+    await sequelize.sync({ alter: true });
+    console.log('✅ Database synced (alter)');
+  } catch (error) {
+    // Fallback for inconsistent legacy constraints after migration from MongoDB setup.
+    if (error.name === 'SequelizeUnknownConstraintError') {
+      console.warn('⚠️ Alter sync failed due to missing constraint. Retrying with safe sync...');
+      await sequelize.sync();
+      console.log('✅ Database synced (safe mode)');
+    } else {
+      throw error;
+    }
+  }
   server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`❌ Port ${PORT} in use. Kill it with: npx kill-port ${PORT}`);
+      process.exit(1);
+    }
+  });
 };
 
 start();

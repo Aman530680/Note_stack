@@ -139,32 +139,35 @@ const Dashboard = () => {
   };
 
   const handleSummarize = async () => {
+    if (selectedNote?.type !== 'pdf') return toast.error('Summary is available only for PDF notes');
     setAiLoading('summary');
     try {
       const res = await summarizeNote(selectedNote.id);
       setSelectedNote({ ...selectedNote, summary: res.data.summary });
       toast.success('Summary generated!');
-    } catch { toast.error('Failed to generate summary. Please try again.'); }
+    } catch (error) { toast.error(error.response?.data?.message || 'Failed to generate summary. Please try again.'); }
     finally { setAiLoading(''); }
   };
 
   const handleGenerateTags = async () => {
+    if (selectedNote?.type !== 'pdf') return toast.error('Tag extraction is available only for PDF notes');
     setAiLoading('tags');
     try {
       const res = await generateTags(selectedNote.id);
       setSelectedNote({ ...selectedNote, tags: res.data.tags });
       toast.success('Tags generated!');
-    } catch { toast.error('Failed to extract tags. Please try again.'); }
+    } catch (error) { toast.error(error.response?.data?.message || 'Failed to extract tags. Please try again.'); }
     finally { setAiLoading(''); }
   };
 
   const handleChat = async () => {
     if (!chatQuestion.trim()) return toast.error('Enter a question!');
+    if (selectedNote?.type !== 'pdf') return toast.error('AI Q&A is available only for PDF notes');
     setAiLoading('chat');
     try {
       const res = await chatWithNote(selectedNote.id, chatQuestion);
       setChatAnswer(res.data.answer);
-    } catch { toast.error('Failed to get answer. Please try again.'); }
+    } catch (error) { toast.error(error.response?.data?.message || 'Failed to get answer. Please try again.'); }
     finally { setAiLoading(''); }
   };
 
@@ -373,20 +376,24 @@ const Dashboard = () => {
             )}
             <div className="ai-section">
               <h3><FaRobot /> AI Features</h3>
-              <div className="ai-feature">
-                <button onClick={handleSummarize} className="ai-btn" disabled={aiLoading === 'summary'}>
-                  {aiLoading === 'summary' ? '⏳ Generating...' : '📝 Generate Summary'}
-                </button>
-                {selectedNote.summary && <div className="ai-result"><p>{selectedNote.summary}</p></div>}
-              </div>
-              <div className="ai-feature">
-                <button onClick={handleGenerateTags} className="ai-btn" disabled={aiLoading === 'tags'}>
-                  {aiLoading === 'tags' ? '⏳ Extracting...' : <><FaTags /> Extract Tags</>}
-                </button>
-                {selectedNote.tags?.length > 0 && (
-                  <div className="tags-row">{selectedNote.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
-                )}
-              </div>
+              {selectedNote.type === 'pdf' && (
+                <>
+                  <div className="ai-feature">
+                    <button onClick={handleSummarize} className="ai-btn" disabled={aiLoading === 'summary'}>
+                      {aiLoading === 'summary' ? '⏳ Generating...' : '📝 Generate Summary'}
+                    </button>
+                    {selectedNote.summary && <div className="ai-result"><p>{selectedNote.summary}</p></div>}
+                  </div>
+                  <div className="ai-feature">
+                    <button onClick={handleGenerateTags} className="ai-btn" disabled={aiLoading === 'tags'}>
+                      {aiLoading === 'tags' ? '⏳ Extracting...' : <><FaTags /> Extract Tags</>}
+                    </button>
+                    {selectedNote.tags?.length > 0 && (
+                      <div className="tags-row">{selectedNote.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
+                    )}
+                  </div>
+                </>
+              )}
               {selectedNote.type === 'pdf' && (
                 <div className="ai-feature">
                   <h4>💬 Ask a Question</h4>

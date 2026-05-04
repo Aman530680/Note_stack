@@ -1,6 +1,21 @@
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://notestack-api.onrender.com/api';
+const TOKEN_KEY = 'token';
+
+/** Same resolution as AuthContext: session tab, then one-time migrate from legacy localStorage. */
+const getStoredToken = () => {
+  const sessionToken = sessionStorage.getItem(TOKEN_KEY);
+  if (sessionToken) return sessionToken;
+
+  const oldToken = localStorage.getItem(TOKEN_KEY);
+  if (oldToken) {
+    sessionStorage.setItem(TOKEN_KEY, oldToken);
+    localStorage.removeItem(TOKEN_KEY);
+    return oldToken;
+  }
+  return null;
+};
 
 const api = axios.create({
   baseURL: API_URL,
@@ -9,7 +24,7 @@ const api = axios.create({
 // Add token to every request
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = getStoredToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -58,6 +73,8 @@ export const markAllAsSeen = () => api.put('/notifications/seen/all');
 export const getUnseenCount = () => api.get('/notifications/unseen/count');
 
 // AI
+export const assistantChat = (message, history = []) =>
+  api.post('/ai/assistant', { message, history });
 export const summarizeNote = (noteId) => api.post(`/ai/summarize/${noteId}`);
 export const generateTags = (noteId) => api.post(`/ai/tags/${noteId}`);
 export const recommendNotes = (noteId) => api.get(`/ai/recommend/${noteId}`);

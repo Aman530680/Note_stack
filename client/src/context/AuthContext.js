@@ -2,10 +2,25 @@ import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 export const AuthContext = createContext();
+const TOKEN_KEY = 'token';
+
+const getInitialToken = () => {
+  const sessionToken = sessionStorage.getItem(TOKEN_KEY);
+  if (sessionToken) return sessionToken;
+
+  // One-time migration from old storage model.
+  const oldToken = localStorage.getItem(TOKEN_KEY);
+  if (oldToken) {
+    sessionStorage.setItem(TOKEN_KEY, oldToken);
+    localStorage.removeItem(TOKEN_KEY);
+    return oldToken;
+  }
+  return null;
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(getInitialToken());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,14 +45,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = (token, userData) => {
-    localStorage.setItem('token', token);
+    // sessionStorage is tab-scoped, so admin and student can be logged in
+    // simultaneously in different browser tabs/windows on the same desktop.
+    sessionStorage.setItem(TOKEN_KEY, token);
     setToken(token);
     setUser(userData);
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(TOKEN_KEY);
     setToken(null);
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];

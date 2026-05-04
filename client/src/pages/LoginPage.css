@@ -174,3 +174,18 @@
   .field label { font-size: 0.75rem; }
   .field input { padding: 0.6rem 0.8rem; font-size: 15px; }
 }
+
+/* Premium structure overrides */
+.auth-layout {
+  width: min(980px, 95vw);
+  border-radius: 22px;
+}
+
+.auth-card,
+.auth-brand {
+  min-height: 560px;
+}
+
+.auth-card {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}

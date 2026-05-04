@@ -321,3 +321,33 @@
   .mark-seen-btn { padding: 0.3rem 0.7rem; font-size: 0.75rem; }
   .approve-comment-btn { font-size: 0.78rem; padding: 0.5rem; }
 }
+
+/* Premium structure overrides */
+.admin-container {
+  max-width: 1280px;
+  padding: 1.1rem;
+  gap: 1.1rem;
+}
+
+.admin-header,
+.notifications-section,
+.notes-management-section,
+.comments-section,
+.stat-box {
+  border-radius: 18px;
+  border: 1px solid rgba(173, 190, 255, 0.2);
+  box-shadow: 0 14px 36px rgba(8, 12, 30, 0.28);
+}
+
+.stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.stat-box { min-height: 98px; }
+.notifications-list { max-height: 300px; }
+.notes-table-wrapper { max-height: 420px; }
+
+@media (max-width: 980px) {
+  .admin-middle-row { grid-template-columns: 1fr; }
+}

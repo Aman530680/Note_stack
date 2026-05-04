@@ -729,3 +729,47 @@
 
 /* Hide the hint for video embeds */
 .note-embed iframe + ::after { display: none; }
+
+/* Premium structure overrides */
+.dashboard-container {
+  max-width: 1280px;
+  padding: 88px 1.1rem 2.2rem;
+}
+
+.top-bar,
+.panel,
+.viewer-content,
+.modal-content,
+.note-card-full {
+  border-radius: 18px;
+  border: 1px solid rgba(173, 190, 255, 0.2);
+  box-shadow: 0 14px 36px rgba(8, 12, 30, 0.3);
+}
+
+.notes-grid {
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.1rem;
+}
+
+.note-card-full {
+  min-height: 540px;
+}
+
+.note-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-height: 300px;
+}
+
+.note-actions-row { margin-top: auto; }
+
+.panel-body {
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+@media (max-width: 900px) {
+  .notes-grid { grid-template-columns: 1fr; }
+  .note-card-full { min-height: auto; }
+}

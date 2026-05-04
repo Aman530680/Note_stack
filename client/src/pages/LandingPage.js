@@ -4,10 +4,10 @@ import { AuthContext } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { 
+import {
   FaRocket, FaEye, FaLightbulb, FaRoad,
-  FaLock, FaUserShield, FaFileUpload, FaSearch, 
-  FaFilePdf, FaDownload, FaStar, FaBell, 
+  FaLock, FaUserShield, FaFileUpload, FaSearch,
+  FaFilePdf, FaDownload, FaStar, FaBell,
   FaChartLine, FaTrophy, FaEnvelope, FaUser, FaCode,
   FaUserGraduate, FaCheckCircle, FaQuestionCircle,
   FaBookOpen, FaUsers, FaAward
@@ -36,13 +36,6 @@ const LandingPage = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  const stats = [
-    { icon: <FaBookOpen />, count: '500+', label: 'Notes Shared' },
-    { icon: <FaUsers />, count: '1000+', label: 'Students' },
-    { icon: <FaDownload />, count: '5000+', label: 'Downloads' },
-    { icon: <FaAward />, count: '100%', label: 'Quality Assured' }
-  ];
 
   const steps = [
     { step: '01', icon: <FaUserGraduate />, title: 'Create Account', desc: 'Sign up for free in seconds. No credit card required.' },
@@ -83,10 +76,10 @@ const LandingPage = () => {
         <div className="navbar-container">
           <div className="navbar-logo">NOTESTACK</div>
           <ul className="navbar-menu">
-            <li><a onClick={() => scrollToSection('home')}>Home</a></li>
-            <li><a onClick={() => scrollToSection('about')}>About</a></li>
-            <li><a onClick={() => scrollToSection('features')}>Features</a></li>
-            <li><a onClick={() => scrollToSection('contact')}>Contact</a></li>
+            <li><button type="button" onClick={() => scrollToSection('home')}>Home</button></li>
+            <li><button type="button" onClick={() => scrollToSection('about')}>About</button></li>
+            <li><button type="button" onClick={() => scrollToSection('features')}>Features</button></li>
+            <li><button type="button" onClick={() => scrollToSection('contact')}>Contact</button></li>
             {user ? (
               <li><a href={user.role === 'admin' ? '/admin' : '/dashboard'} className="nav-btn">Dashboard</a></li>
             ) : (
@@ -101,9 +94,7 @@ const LandingPage = () => {
       
       {/* Hero Section */}
       <section id="home" className="hero-section">
-        <video className="background-video" autoPlay loop muted>
-          <source src="https://cdn.pixabay.com/vimeo/330043164/abstract-21205.mp4?width=1280&hash=c6f1f8e5e8e5e8e5e8e5e8e5e8e5e8e5e8e5e8e5" type="video/mp4" />
-        </video>
+        <div className="hero-background-image" />
         
         <div className="overlay"></div>
         

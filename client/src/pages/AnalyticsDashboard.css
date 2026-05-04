@@ -151,3 +151,38 @@
   .overview-grid { grid-template-columns: 1fr; }
   .analytics-container { padding: 0.8rem; }
 }
+
+/* Premium structure overrides */
+.analytics-container {
+  max-width: 1280px;
+  padding: 1.1rem;
+  gap: 1.1rem;
+}
+
+.analytics-header,
+.chart-card,
+.overview-card {
+  border-radius: 18px;
+  border: 1px solid rgba(173, 190, 255, 0.2);
+  box-shadow: 0 14px 36px rgba(8, 12, 30, 0.28);
+}
+
+.overview-grid {
+  gap: 0.8rem;
+}
+
+.overview-card {
+  min-width: 148px;
+  padding: 0.65rem 1rem;
+}
+
+.chart-card {
+  min-height: 360px;
+}
+
+.leaderboard-table-wrapper { max-height: 300px; }
+
+@media (max-width: 900px) {
+  .overview-grid { justify-content: stretch; }
+  .overview-card { flex: 1 1 100%; }
+}

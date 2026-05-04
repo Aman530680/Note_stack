@@ -42,3 +42,9 @@
 @media (max-width: 380px) {
   .auth-card { padding: 1.5rem 1rem; gap: 1rem; }
 }
+
+/* Premium structure overrides */
+.signup-layout {
+  width: min(1020px, 95vw);
+  height: min(620px, 92vh);
+}

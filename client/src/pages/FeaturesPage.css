@@ -136,3 +136,20 @@
     gap: 1.5rem;
   }
 }
+
+/* Premium structure overrides */
+.features-container {
+  max-width: 1280px;
+  padding: 3.2rem 1.2rem;
+}
+
+.features-grid {
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.feature-card {
+  min-height: 285px;
+  border-radius: 18px;
+  box-shadow: 0 16px 34px rgba(8, 16, 40, 0.28);
+}

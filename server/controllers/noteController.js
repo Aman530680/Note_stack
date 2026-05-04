@@ -1,5 +1,5 @@
 const { Note, User, Notification } = require('../models');
-const { Op } = require('sequelize');
+const { Op, fn, col, where } = require('sequelize');
 const pdfParse = require('pdf-parse');
 
 const calcRankScore = (note) => {
@@ -9,6 +9,33 @@ const calcRankScore = (note) => {
 };
 
 const noteWithUploader = { include: [{ model: User, as: 'uploader', attributes: ['id', 'name', 'email'] }] };
+
+const normalizeText = (value = '') => value.trim().toLowerCase();
+const getYouTubeId = (url = '') => {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+  return match ? match[1] : '';
+};
+
+const extractPdfTextFromUrl = async (url) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) return '';
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('pdf') && !url.toLowerCase().endsWith('.pdf')) return '';
+
+    const bytes = await response.arrayBuffer();
+    const parsed = await pdfParse(Buffer.from(bytes));
+    return (parsed.text || '').replace(/\s+/g, ' ').trim();
+  } catch (error) {
+    return '';
+  } finally {
+    clearTimeout(timer);
+  }
+};
 
 exports.uploadNote = async (req, res) => {
   try {
@@ -20,17 +47,61 @@ exports.uploadNote = async (req, res) => {
 
     if (noteType === 'pdf') {
       if (!req.file) return res.status(400).json({ success: false, message: 'Please upload a file' });
+
+      const normalizedTitle = normalizeText(title);
+      const normalizedSubject = normalizeText(subject);
+      const existingPdf = await Note.findOne({
+        where: {
+          type: 'pdf',
+          [Op.and]: [
+            where(fn('lower', col('title')), normalizedTitle),
+            where(fn('lower', col('subject')), normalizedSubject)
+          ]
+        }
+      });
+      if (existingPdf) {
+        return res.status(409).json({
+          success: false,
+          message: 'This PDF note already exists'
+        });
+      }
+
       fileUrl = req.file.path;
       try {
-        const response = await fetch(fileUrl);
-        const buffer = Buffer.from(await response.arrayBuffer());
-        const data = await pdfParse(buffer);
-        extractedText = data.text.slice(0, 8000);
-      } catch (e) { /* silent fail */ }
+        extractedText = await extractPdfTextFromUrl(fileUrl);
+        if (!extractedText) {
+          extractedText = `Title: ${title}\nSubject: ${subject}\nDescription: ${description}`;
+        }
+      } catch (e) {
+        extractedText = `Title: ${title}\nSubject: ${subject}\nDescription: ${description}`;
+      }
     }
 
     if (noteType === 'video' && !videoUrl)
       return res.status(400).json({ success: false, message: 'Video URL is required' });
+
+    if (noteType === 'video') {
+      const normalizedUrl = normalizeText(videoUrl);
+      const videoId = getYouTubeId(normalizedUrl);
+      const videoNotes = await Note.findAll({
+        where: { type: 'video' },
+        attributes: ['id', 'videoUrl']
+      });
+
+      const duplicateVideo = videoNotes.find((note) => {
+        const existingUrl = normalizeText(note.videoUrl);
+        if (existingUrl === normalizedUrl) return true;
+        if (videoId) return getYouTubeId(existingUrl) === videoId;
+        return false;
+      });
+
+      if (duplicateVideo) {
+        return res.status(409).json({
+          success: false,
+          message: 'This video note already exists'
+        });
+      }
+    }
 
     const note = await Note.create({
       title, subject, description,
