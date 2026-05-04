@@ -46,6 +46,7 @@ const Dashboard = () => {
   const [chatQuestion, setChatQuestion] = useState('');
   const [chatAnswer, setChatAnswer] = useState('');
   const [recommendations, setRecommendations] = useState([]);
+  const [pdfModal, setPdfModal] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => { fetchMyNotes(); fetchAllNotes(); }, []);
@@ -216,26 +217,58 @@ const Dashboard = () => {
 
           {/* ALL NOTES */}
           {activeTab === 'all' && (
-            <div className="panel full-panel">
-              <div className="panel-body">
-                {notes.length === 0 ? <p className="no-data">No approved notes yet.</p> :
-                  <div className="notes-grid">
-                    {notes.map(note => (
-                      <div key={note.id} className="note-card" onClick={() => handleNoteClick(note)}>
-                        <div className="note-type-badge"><NoteTypeIcon type={note.type} /> {note.type}</div>
-                        <h3>{note.title}</h3>
-                        <p className="note-subject">{note.subject}</p>
-                        <p className="note-desc">{note.description}</p>
+            <div className="notes-grid">
+              {notes.length === 0 ? <p className="no-data">No approved notes yet.</p> :
+                notes.map(note => (
+                  <div key={note.id} className="note-card-full">
+                    {/* Embedded content */}
+                    <div className="note-embed" onClick={() => note.type === 'pdf' && note.fileUrl && setPdfModal(note)}>
+                      {note.type === 'video' ? (
+                        (() => {
+                          const videoId = getYouTubeId(note.videoUrl);
+                          return videoId
+                            ? <iframe src={`https://www.youtube.com/embed/${videoId}`} title={note.title} allowFullScreen />
+                            : <div className="note-embed-placeholder"><FaYoutube /><span>Invalid YouTube URL</span></div>;
+                        })()
+                      ) : note.fileUrl ? (
+                        <iframe src={getFileUrl(note.fileUrl)} title={note.title} />
+                      ) : (
+                        <div className="note-embed-placeholder"><FaFilePdf /><span>No file</span></div>
+                      )}
+                    </div>
+                    {/* Card body */}
+                    <div className="note-card-body">
+                      <div className="note-card-top">
+                        <span className="note-type-badge"><NoteTypeIcon type={note.type} /> {note.type}</span>
+                      </div>
+                      <h3>{note.title}</h3>
+                      <p className="note-subject">{note.subject}</p>
+                      <p className="note-desc">{note.description}</p>
+                      <div className="note-card-footer">
                         <div className="note-stats">
                           <span><FaStar /> {note.avgRating?.toFixed(1)}</span>
                           <span><FaDownload /> {note.downloads}</span>
                         </div>
-                        <p className="note-author">By: {note.uploader?.name}</p>
+                        <span className="note-author">By: {note.uploader?.name}</span>
                       </div>
-                    ))}
+                      <div className="note-actions-row">
+                        {note.type === 'pdf' && (
+                          <button className="btn-download" onClick={async () => {
+                            await incrementDownload(note.id);
+                            const link = document.createElement('a');
+                            link.href = getFileUrl(note.fileUrl);
+                            link.target = '_blank';
+                            link.download = `${note.title}.pdf`;
+                            link.click();
+                            toast.success('Download started!');
+                          }}><FaDownload /> Download</button>
+                        )}
+                        <button className="btn-rate" onClick={() => handleNoteClick(note)}><FaStar /> Rate</button>
+                      </div>
+                    </div>
                   </div>
-                }
-              </div>
+                ))
+              }
             </div>
           )}
 
@@ -398,6 +431,33 @@ const Dashboard = () => {
                 </>
               )}
             </div>
+          </div>
+        </div>
+      )}
+      {/* Full-screen PDF Modal */}
+      {pdfModal && (
+        <div className="pdf-fullscreen-overlay" onClick={() => setPdfModal(null)}>
+          <div className="pdf-fullscreen-container" onClick={e => e.stopPropagation()}>
+            <div className="pdf-fullscreen-header">
+              <h3><FaFilePdf /> {pdfModal.title}</h3>
+              <div className="pdf-fullscreen-actions">
+                <button className="download-btn" onClick={async () => {
+                  await incrementDownload(pdfModal.id);
+                  const link = document.createElement('a');
+                  link.href = getFileUrl(pdfModal.fileUrl);
+                  link.target = '_blank';
+                  link.download = `${pdfModal.title}.pdf`;
+                  link.click();
+                  toast.success('Download started!');
+                }}><FaDownload /> Download</button>
+                <button className="close-btn" onClick={() => setPdfModal(null)}>✕</button>
+              </div>
+            </div>
+            <iframe
+              src={getFileUrl(pdfModal.fileUrl)}
+              title={pdfModal.title}
+              className="pdf-fullscreen-iframe"
+            />
           </div>
         </div>
       )}
